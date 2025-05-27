@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>B2G1 Test</title>
+</head>
+<body>
+    <h1>B2G1 Test Page</h1>
+
+    <div id="main-cart-items" data-id="main-cart-items">
+        <div class="js-contents">
+            <p>Initial main cart content.</p>
+            <!-- Cart items will be dynamically added here by test-b2g1-setup.js -->
+            <!-- but b2g1.js queries globally for '.color-info .cart-item' -->
+            <div class="color-info">
+                <!-- Mock cart items will be placed here by test setup -->
+            </div>
+        </div>
+    </div>
+
+    <div id="cart-icon-bubble">
+        <div class="shopify-section">Initial cart icon bubble</div>
+    </div>
+
+    <div class="b2g1-progress" style="display: block;">
+        <div class="progress-bar" style="width: 0%;"></div>
+        <div class="item-count">0/3 items</div>
+        <div class="progress-message">Add items to qualify for B2G1 offer.</div>
+        <button class="close-progress">Close</button>
+    </div>
+
+    <div id="gift-selection-modal" style="display: none;"></div>
+
+    <h2>Test Controls</h2>
+    <button id="test1-setup">Setup Test 1 (2 Paid, 1 Free SKU A)</button>
+    <button id="test1-trigger">Trigger Test 1 (Add 1 More Paid SKU A)</button>
+    <button id="test-pubsub">Run with Mock Pub/Sub</button>
+    <button id="test-no-pubsub">Run with No Pub/Sub (Fallback)</button>
+    <button id="reset-tests">Reset Tests</button>
+
+    <h2>Console Log</h2>
+    <pre id="console-log"></pre>
+
+    <script>
+        // Mock confetti
+        function confetti(options) {
+            logToPage(`Mock confetti called with options: ${JSON.stringify(options)}`);
+        }
+    </script>
+    <script src="assets/b2g1.js"></script>
+    <script src="test-b2g1-setup.js"></script>
+</body>
+</html>
