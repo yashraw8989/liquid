@@ -1,0 +1,93 @@
+<style>
+.last-icons{
+	    background-color: {{ section.settings.background_color }};
+     }
+  </style>
+<section class="last-icons" >
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-3 col-lg-3 col-xs-6">
+        <div class="icon-card text-center">
+          <img src="{{ section.settings.icon1_image | img_url: 'master' }}">
+          <h3>{{ section.settings.icon1_text }}</h3>
+        </div>
+      </div>
+      <div class="col-sm-3 col-lg-3 col-xs-6">
+        <div class="icon-card text-center">
+          <img src="{{ section.settings.icon2_image | img_url: 'master' }}">
+          <h3>{{ section.settings.icon2_text }}</h3>
+        </div>
+      </div>
+      <div class="col-sm-3 col-lg-3 col-xs-6">
+        <div class="icon-card text-center">
+          <img src="{{ section.settings.icon3_image | img_url: 'master' }}">
+          <h3>{{ section.settings.icon3_text }}</h3>
+        </div>
+      </div>
+      <div class="col-sm-3 col-lg-3 col-xs-6">
+        <div class="icon-card text-center right-border-none">
+          <img src="{{ section.settings.icon4_image | img_url: 'master' }}">
+          <h3>{{ section.settings.icon4_text }}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Trust Badge",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "icon1_image",
+      "label": "Icon 1 Image"
+    },
+    {
+      "type": "text",
+      "id": "icon1_text",
+      "label": "Icon 1 Text"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon2_image",
+      "label": "Icon 2 Image"
+    },
+    {
+      "type": "text",
+      "id": "icon2_text",
+      "label": "Icon 2 Text"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon3_image",
+      "label": "Icon 3 Image"
+    },
+    {
+      "type": "text",
+      "id": "icon3_text",
+      "label": "Icon 3 Text"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon4_image",
+      "label": "Icon 4 Image"
+    },
+    {
+      "type": "text",
+      "id": "icon4_text",
+      "label": "Icon 4 Text"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#9be2f2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust Badge"
+    }
+  ]
+}
+{% endschema %}

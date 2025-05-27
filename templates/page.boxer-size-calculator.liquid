@@ -1,0 +1,79 @@
+<div class="calculator page-content page-width page-width--narrow section-template--17099647352990__main-padding int-title-head">
+  <div class="bra-size-calculator">
+    <div class="row size-measurement">
+      <div class="col-lg-7 col-md-7 col-sm-12 collection_clm">
+        <div class="light-img overflow-hidden shadow">
+          <img
+            src="https://cdn.shopify.com/s/files/1/0652/5383/4910/files/33-Inch-Waist.jpg?v=1718772783"
+            width="100%;"
+          >
+        </div>
+      </div>
+      <div class="col-lg-5 col-md-5 col-sm-12 background-white-border">
+        <!-- <img src="https://cdn.shopify.com/s/files/1/0652/5383/4910/files/step2.jpg?v=1715743590"> -->
+        <div class="text-bind-content">
+          <img
+            src="https://cdn.shopify.com/s/files/1/0652/5383/4910/files/bra-size-quiz-icon.png?v=1716195845"
+            width="100%"
+            alt="Logo Image"
+          >
+          <h1 class="text-uppercase">not sure about your size?</h1>
+          <h2 class="text-uppercase">take the boxer size quiz</h2>
+          <div class="cta__content-4 text-anim text-center mt-15">
+            <!--
+              <a rel="noreferrer" href="" target="_blank" class="nionx-btn nionx-btn--base dyn-btn-three"><span>Shop MORE</span></a>
+            -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <h3>
+      The right fit is essential for your comfort and ease of movement. Our easy-to-use calculator will help you find
+      your ideal boxer size in just a few simple steps
+    </h3>
+    <h5>How It Works:</h5>
+    <ul>
+      <li><p><span>Measure Your Waist:</span>
+      
+        Using a soft measuring tape, measure around your natural waistline, just above your hips. Make sure the tape is
+        snug but not tight.
+      </p></li>
+     
+        <li><p><span>Measure Your Inseam:</span>
+
+        Measure from the top of your inner thigh down to the bottom of your ankle.</p></li>
+      
+      <li>
+       <p> <span>Calculate Your Size:</span>
+
+        Click the "Calculate" button to find your perfect boxer size. The calculator will determine the ideal size based
+        on your measurements, ensuring a comfortable fit. Once you have your perfect boxer size, browse our wide range of stylish and comfortable boxers designed to fit every
+    body type.</p>
+      </li>
+    </ul>
+
+   
+
+    <div class="boxer-size-calculator bra-size">
+      <!-- <h2>Find Your Boxer Size!</h2> -->
+
+      <form id="boxer-size-form">
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-sm-12 underbust-bef" style="position:relative;">
+            <label for="waist">Waist measurement (in inches):</label>
+            <input type="number" id="waist" name="waist" min="20" max="50" step="0.5" required>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-12 underbust-bef" style="position:relative;">
+            <label for="inseam">Inseam measurement (in inches):</label>
+            <input type="number" id="inseam" name="inseam" min="20" max="40" step="0.5" required>
+          </div>
+          <div class="boxer-size-btn mt-20">
+            <button class="nionx-btn nionx-btn--base" type="submit">Calculate</button>
+          </div>
+        </div>
+      </form>
+      <div id="boxer-size-result"></div>
+    </div>
+  </div>
+</div>
+<script src="{{ 'custom.js' | asset_url }}" defer="defer"></script>

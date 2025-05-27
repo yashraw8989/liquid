@@ -1,0 +1,55 @@
+{% comment %}
+  File: sections/product-details-text.liquid
+  Description: Displays product details text.
+{% endcomment %}
+
+<div class="product-details page-width" style="padding-bottom: 10rem; z-index: 2; position: relative;">
+  <div class="my-container">
+    <div class="p-0 col-sm-12">
+      {%- if section.settings.text != blank -%}
+        <p style="color: {{ section.settings.text_color | default: '#000' }}; font-weight: {{ section.settings.text_font_weight | default: 400 }};">
+          {{ section.settings.text }}
+        </p>
+      {%- else -%}
+        <p style="color: #000; font-weight: 400;">
+          Mark your entrance without saying a word! An olfactory symphony...
+        </p>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product Details Text",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Mark your entrance without saying a word!  An olfactory symphony...</p>"
+    },
+    {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text Color",
+        "default": "#000"
+      },
+      {
+        "type": "range",
+        "id": "text_font_weight",
+        "label": "Text Font Weight",
+        "min": 100,
+        "max": 900,
+        "step": 100,
+        "default": 400
+      }
+  ],
+  "presets": [
+    {
+      "name": "Product Details Text",
+      "category": "Text"
+    }
+  ]
+}
+{% endschema %}

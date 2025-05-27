@@ -1,0 +1,177 @@
+<style>
+  .background-pink {
+    background-color: {{ section.settings.image_bg_color | default: '#ecbdd6' }};
+}
+  .text-bind-content h2 {
+    font-size: {{ section.settings.font_size | default: '3' }}rem;
+    letter-spacing: {{ section.settings.letter_spacing | default: '10' }}px;
+    font-weight: {{ section.settings.heading_font_weight | default: '600' }};
+    color: {{ section.settings.font_color | default: '#000' }};
+}
+    .text-bind-content h4 {
+    font-size: {{ section.settings.heading_four_font_size | default: '15' }}px;
+    color: {{ section.settings.heading_four_font_color | default: '#000' }};
+    }
+    .dyn-btn-three {
+    font-size: {{ section.settings.button_font_size | default: '22' }}px;
+    font-style: normal;
+    font-weight: {{ section.settings.button_font_weight | default: '600' }};
+    background-color: {{ section.settings.button_bg_color }};
+    color: {{ section.settings.button_text_color }};
+  }
+    .dyn-btn-three:hover {
+    color: {{ section.settings.button_hover_text_color }};
+  }
+.dyn-btn-three::before {
+    background: {{ section.settings.button_hover_color }};
+}
+</style>
+{% comment %}
+  This is a Shopify section for displaying a text block, an image, and a button.
+{% endcomment %}
+
+<section class="pad-40-tb pad-left-right">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-7 col-md-6 col-sm-12 collection_clm">
+        <div class="darkk-img overflow-hidden shadow">
+          <img src="{{ section.settings.image_left | img_url: 'master' }}" alt="Left Image">
+        </div>
+      </div>
+      <div class="col-lg-5 col-md-6 col-sm-12 disply-flexbox background-pink">
+        <div class="text-bind-content">
+          <img src="{{ section.settings.logo_image | img_url: 'master' }}" width="100%" alt="Logo Image">
+          <h4 class="text-uppercase">{{ section.settings.heading }}</h4>
+          <h2 class="text-uppercase">{{ section.settings.subheading }}</h2>
+          <div class="cta__content-4 text-anim text-center mt-20">
+            <a rel="noreferrer" href="{{ section.settings.button_link }}" target="_blank" class="nionx-btn nionx-btn--base shop_btn dyn-btn-three"><span>{{ section.settings.button_text }}</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Take The Bra Size Quiz",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image_left",
+      "label": "Upload Left Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_image",
+      "label": "Upload Logo Image"
+    },
+     {
+      "type": "color",
+      "id": "image_bg_color",
+      "label": "Background Color",
+      "default": "#ecbdd6"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "not sure about your size?"
+    },
+    {
+      "type": "color",
+      "id": "heading_four_font_color",
+      "label": "Font Color",
+      "default": "#000"
+    },
+     {
+      "type": "number",
+      "id": "heading_four_font_size",
+      "label": "Font Size (px)",
+      "default": 15
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "take the bra size quiz"
+    },
+    {
+      "type": "color",
+      "id": "font_color",
+      "label": "Font Color",
+      "default": "#000"
+    },
+      {
+      "type": "number",
+      "id": "font_size",
+      "label": "Font Size (rem)",
+      "default": 3
+    },
+     {
+      "type": "number",
+      "id": "letter_spacing",
+      "label": "Letter Sapcing (px)",
+      "default": 10
+    },
+    {
+      "type": "number",
+      "id": "heading_font_weight",
+      "label": "Font Weight",
+      "default": 600
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop MORE"
+    },
+        {
+      "type": "number",
+      "id": "button_font_size",
+      "label": "Button Font Size (px)",
+      "default": 22
+    },
+    {
+      "type": "number",
+      "id": "button_font_weight",
+      "label": "Button Font Weight",
+      "default": 600
+    },
+        {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button Background Color",
+      "default": "#FE0008"
+    },
+        {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#FFFFFF"
+    },
+        {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Button Hover Text Color",
+      "default": "#fe0008"
+    },
+        {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button Hover Color",
+      "default": "#9be2f2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Take The Bra Size Quiz",
+      "category": "Text and image"
+    }
+  ]
+}
+{% endschema %}

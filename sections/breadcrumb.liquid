@@ -1,0 +1,210 @@
+{% comment %}
+  Breadcrumbs Section by The Prompted
+  March 2024
+  <https://www.youtube.com/@theprompted>
+{% endcomment %}
+
+{%- if section.settings.breadcrumbs_enabled -%}
+  {%- unless template == 'index' or template == 'cart' or template == '404' -%}
+    {% assign url_parts = request.path | split: '/' %}
+    {% assign breadcrumb_paths = '' %}
+
+    {% for part in url_parts %}
+      {% if part != '' %}
+        {% assign breadcrumb_paths = breadcrumb_paths | append: '/' | append: part %}
+      {% endif %}
+    {% endfor %}
+
+    <div class="page-width gradient color-{{ section.settings.color_scheme }}">
+      <nav aria-label="Breadcrumb" class="breadcrumbs">
+        <ol class="breadcrumbs__list">
+          <li class="breadcrumbs__item"><a class="breadcrumbs__link" href="{{ request.locale.root_url }}">Home</a></li>
+
+          {% assign disabled_links = 'page,collections,apps,products' | split: ',' %}
+          {% assign breadcrumb_url = '' %}
+          {% for part in url_parts %}
+            {% if part != '' %}
+              {% assign breadcrumb_url = breadcrumb_url | append: '/' | append: part %}
+              {% assign part_name = part | replace: '-', ' ' | capitalize %}
+
+              {% if forloop.last %}
+                <li class="breadcrumbs__item" aria-current="page">{{ part_name }}</li>
+              {% else %}
+                {% if disabled_links contains part %}
+                  <li class="breadcrumbs__item">{{ part_name }}</li>
+                {% else %}
+                  <li class="breadcrumbs__item">
+                    <a class="breadcrumbs__link" href="{{ breadcrumb_url }}">{{ part_name }}</a>
+                  </li>
+                {% endif %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </ol>
+      </nav>
+      {% if section.settings.enable_divider %}
+        <div id="breadcrumbs-divider"></div>
+      {% endif %}
+    </div>
+  {% endunless %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Breadcrumbs",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "breadcrumbs_enabled",
+      "label": "Enable Breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "prefer_shortest_path",
+      "label": "Use Shortest Path",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "separator_shape",
+      "label": "Breadcrumb Separator Shape",
+      "options": [
+        {
+          "value": "triangle",
+          "label": "Triangle ( > )"
+        },
+        {
+          "value": "slash",
+          "label": "Slash ( / )"
+        }
+      ],
+      "default": "triangle"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font Size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_divider",
+      "label": "Enable Divider",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider Color",
+      "default": "#ccc"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 12
+    }
+  ],
+  "presets": [
+    {
+      "name": "breadcrumbs"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .breadcrumbs {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  .breadcrumbs__list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-size: {{ section.settings.font_size }}px;
+  }
+
+  .breadcrumbs__item {
+    display: inline-block;
+  }
+
+  .breadcrumbs__item:not(:last-child):after {
+    content: '';
+    display: inline-block;
+    margin: 0 .20em;
+    position: relative;
+    vertical-align: middle;
+    {% if section.settings.separator_shape == 'triangle' %}
+      border-style: solid;
+      border-width: .10em .10em 0 0;
+      height: .30em;
+      width: .30em;
+      transform: rotate(45deg);
+      top: -0.1em;
+    {% elsif section.settings.separator_shape == 'slash' %}
+      content: '/';
+      margin-left: .5em;
+    {% endif %}
+  }
+
+  .breadcrumbs__link {
+    cursor: pointer;
+    display: inline-block;
+    border: none;
+    box-shadow: none;
+    text-decoration: none;
+    text-underline-offset: 0.3rem;
+    color: rgb(var(--color-text));
+    /*font-size: 1.4rem;*/
+    font-family: inherit;
+  }
+
+  .breadcrumbs__link:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.3rem;
+    color: rgb(var(--color-foreground));
+  }
+
+  #breadcrumbs-divider {
+    display: block;
+    height: 1px;
+    background-color: {{ section.settings.divider_color }};
+  }
+</style>
+<script>
+  // Add a class to the last anchor element
+   lastLink.classList.add("current-page");
+</script>

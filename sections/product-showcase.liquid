@@ -1,0 +1,103 @@
+
+
+<section class="mtb-150">
+  <div class="container-fluid">
+    <div class="row align-items-center column-reverse">
+      <div class="col-lg-6 col-md-8 col-sm-8 col-xs-12" data-aos="fade-right" data-aos-easing="linear" data-aos-duration="2000"
+     data-aos-anchor-placement="center-bottom">
+        <div class="row">
+           <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <div class="interbox align-item-center">
+              <video class="video-showcases" width="100%" height="" autoplay="" muted="" playsinline=""  loop="">
+                <source src="https://cdn.shopify.com/videos/c/o/v/c7d51af3f126470dbc54eebccb9772be.mp4" type="video/mp4">
+              </video>
+              <a href="{{ section.settings.product2_url | product_url }}">
+                <h3>{{ section.settings.product2_name }}</h3>
+              <div class="inr cta__content-4 text-anim text-center">
+                <h4>{{ section.settings.product2_price }}</h4>
+              </div></a>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <div class="interbox h3in align-item-center"><a href="{{ section.settings.product1_url | product_url }}">
+              <img src="{{ section.settings.product1_image | img_url: '' }}" class="img-fluid interboximg">
+              <h3>{{ section.settings.product1_name }}</h3>
+              <div class="inr cta__content-4 text-anim text-center">
+                <h4>{{ section.settings.product1_price }}</h4>
+              </div></a>
+            </div>
+          </div>
+         
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-4 col-sm-4 col-xs-12" data-aos="fade-left" data-aos-easing="linear" data-aos-duration="2000"
+     data-aos-anchor-placement="center-bottom">
+        <div class="text-head-content">
+          <h2>{{ section.settings.heading }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{% schema %}
+{
+  "name": "Product Showcase",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Lingerie That Nurtures Your Body"
+    },
+    {
+      "type": "image_picker",
+      "id": "product1_image",
+      "label": "Product 1 Image"
+    },
+    {
+      "type": "text",
+      "id": "product1_name",
+      "label": "Product 1 Name"
+    },
+    {
+      "type": "text",
+      "id": "product1_price",
+      "label": "Product 1 Price"
+    },
+    {
+      "type": "url",
+      "id": "product1_url",
+      "label": "Product 1 URL"
+    },
+    {
+      "type": "url",
+      "id": "product2_video",
+      "label": "Product 2 Video URL"
+    },
+    {
+      "type": "text",
+      "id": "product2_name",
+      "label": "Product 2 Name"
+    },
+    {
+      "type": "text",
+      "id": "product2_price",
+      "label": "Product 2 Price"
+    },
+       {
+      "type": "url",
+      "id": "product2_url",
+      "label": "Product 2 URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Showcase"
+    }
+  ]
+}
+
+
+{% endschema %}

@@ -1,0 +1,153 @@
+{% comment %}
+  Renders a list of product's price (regular, sale)
+
+  Accepts:
+  - product: {Object} Product Liquid object (optional)
+  - use_variant: {Boolean} Renders selected or first variant price instead of overall product pricing (optional)
+  - show_badges: {Boolean} Renders 'Sale' and 'Sold Out' tags if the product matches the condition (optional)
+  - price_class: {String} Adds a price class to the price element (optional)
+  - show_compare_at_price: {Boolean} Renders the compare at price if the product matches the condition (optional)
+
+  Usage:
+  {% render 'price', product: product %}
+{% endcomment %}
+{%- liquid
+  if use_variant
+    assign target = product.selected_or_first_available_variant
+  else
+    assign target = product
+  endif
+
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price | default: 1999
+  assign price_min = product.price_min
+  assign price_max = product.price_max
+  assign available = target.available | default: false
+  assign money_price = price | money
+  assign money_price_min = price_min | money
+  assign money_price_max = price_max | money
+  if settings.currency_code_enabled
+    assign money_price = price | money_with_currency
+    assign money_price_min = price_min | money_with_currency
+    assign money_price_max = price_max | money_with_currency
+  endif
+
+  if target == product and product.price_varies
+    assign money_price = 'products.product.price.from_price_html' | t: price: money_price
+  endif
+-%}
+
+<div
+  class="
+    price
+    {%- if price_class %} {{ price_class }}{% endif -%}
+    {%- if available == false %} price--sold-out{% endif -%}
+    {%- if compare_at_price > price and product.quantity_price_breaks_configured? != true %} price--on-sale{% endif -%}
+    {%- if compare_at_price > price and product.quantity_price_breaks_configured? %} volume-pricing--sale-badge{% endif -%}
+    {%- if product.price_varies == false and product.compare_at_price_varies %} price--no-compare{% endif -%}
+    {%- if show_badges %} price--show-badge{% endif -%}
+  "
+>
+  <div class="price__container">
+    {%- comment -%}
+      Explanation of description list:
+        - div.price__regular: Displayed when there are no variants on sale
+        - div.price__sale: Displayed when a variant is a sale
+    {%- endcomment -%}
+    <div class="price__regular">
+      {%- if product.quantity_price_breaks_configured? -%}
+        {%- if show_compare_at_price and compare_at_price -%}
+          {%- unless product.price_varies == false and product.compare_at_price_varies %}
+            <span class="visually-hidden visually-hidden--inline">
+              {{- 'products.product.price.regular_price' | t -}}
+              .00
+            </span>
+            <span>
+              <s class="price-item price-item--regular variant-item__old-price">
+                {% if settings.currency_code_enabled %}
+                  {{ compare_at_price | money_with_currency }}
+                {% else %}
+                  {{ compare_at_price | money }}
+                {% endif %}
+              </s>
+            </span>
+          {%- endunless -%}
+        {%- endif -%}
+        <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
+        <span class="price-item price-item--regular">
+          {{- 'products.product.volume_pricing.price_range' | t: minimum: money_price_min, maximum: money_price_max -}}
+        </span>
+      {%- else -%}
+        <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
+        <span class="price-item price-item--regular"> {{ money_price }} </span>
+      {%- endif -%}
+    </div>
+    <div class="price__sale">
+      {%- unless product.price_varies == false and product.compare_at_price_varies %}
+        <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
+        <span>
+          <s class="price-item price-item--regular">
+            {% if settings.currency_code_enabled %}
+              {{ compare_at_price | money_with_currency }}
+            {% else %}
+              {{ compare_at_price | money }}
+            {% endif %}
+          </s>
+        </span>
+      {%- endunless -%}
+      <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.sale_price' | t }}</span>
+      <span class="price-item price-item--sale price-item--last"> {{ money_price }} </span>
+    </div>
+    <small class="unit-price caption{% if product.selected_or_first_available_variant.unit_price_measurement == nil %} hidden{% endif %}">
+      <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
+      <span class="price-item price-item--last">
+        <span>{{- product.selected_or_first_available_variant.unit_price | money -}}</span>
+        <span aria-hidden="true">/</span>
+        <span class="visually-hidden">&nbsp;{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
+        <span>
+          {%- if product.selected_or_first_available_variant.unit_price_measurement.reference_value != 1 -%}
+            {{- product.selected_or_first_available_variant.unit_price_measurement.reference_value -}}
+          {%- endif -%}
+          {{ product.selected_or_first_available_variant.unit_price_measurement.reference_unit }}
+        </span>
+      </span>
+    </small>
+  </div>
+
+  {%- if show_badges -%}
+    <span class="badge price__badge-sale color-{{ settings.sale_badge_color_scheme }}">
+      {{ 'products.product.on_sale' | t }}
+    </span>
+
+    <span class="badge price__badge-sold-out color-{{ settings.sold_out_badge_color_scheme }}">
+      {{ 'products.product.sold_out' | t }}
+    </span>
+  {%- endif -%}
+
+  {% if product.available %}
+    <form action="/cart/add" method="post" enctype="multipart/form-data" class="add-to-cart-form ">
+      <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+
+      <button
+        type="submit-collection-page"
+        class="nionx-btn nionx-btn--base product-form__submit button button--full-width button--secondary Buttonstyle__BaseButton-sc-uenrm8-0 dQWvvo button--primary"
+      >
+        <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M11.2988 3.93606C11.2988 1.90046 9.60755 0.231445 7.5405 0.231445C5.47345 0.231445 3.7823 1.90053 3.7823 3.93593V5.46251H0.859289C0.504293 5.46251 0.23291 5.72707 0.23291 6.07314V15.6398C0.23291 17.3293 1.63178 18.693 3.3648 18.693H8.7463C8.52841 18.3161 8.34935 17.9139 8.21458 17.4919L3.36452 17.492C2.3205 17.492 1.48538 16.6778 1.48538 15.6601V6.70401L3.7823 6.70387V7.76225C3.7823 8.10833 4.05368 8.37289 4.40867 8.37289C4.76367 8.37289 5.03505 8.10833 5.03505 7.76225V6.70387H10.0461V7.76225C10.0461 8.10833 10.3175 8.37289 10.6725 8.37289C11.0275 8.37289 11.2988 8.10833 11.2988 7.76225V6.70387H13.5956V9.48248C13.7547 9.47015 13.9155 9.46387 14.0778 9.46387C14.3388 9.46387 14.5959 9.48011 14.8483 9.51163V6.07314C14.8483 5.72707 14.5769 5.46251 14.2219 5.46251L11.2988 5.46265V3.93606ZM7.5405 1.45243C8.91853 1.45243 10.046 2.57202 10.046 3.93572V5.4623H5.03498V3.93572C5.03498 2.57188 6.16246 1.45243 7.5405 1.45243Z" fill="#fff"></path>
+          <path d="M14.0773 12.5402C13.6997 12.5402 13.3936 12.8462 13.3936 13.2239V14.9334H11.6841C11.3065 14.9334 11.0004 15.2394 11.0004 15.6171C11.0004 15.9947 11.3065 16.3008 11.6841 16.3008H13.3936V18.0103C13.3936 18.3879 13.6997 18.694 14.0773 18.694C14.455 18.694 14.761 18.3879 14.761 18.0103V16.3008H16.4705C16.8482 16.3008 17.1542 15.9947 17.1542 15.6171C17.1542 15.2394 16.8482 14.9334 16.4705 14.9334H14.761V13.2239C14.761 12.8462 14.455 12.5402 14.0773 12.5402Z" fill="#fff"></path>
+        </svg>
+        <span class="button__content mk animate">Add to Cart</span>
+      </button>
+      <button class="cloneBtn" onclick="ATBModalOpen(event, '8849910169899')" aria-label="Button for Add to Bag Popup">
+        <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M11.2988 3.93606C11.2988 1.90046 9.60755 0.231445 7.5405 0.231445C5.47345 0.231445 3.7823 1.90053 3.7823 3.93593V5.46251H0.859289C0.504293 5.46251 0.23291 5.72707 0.23291 6.07314V15.6398C0.23291 17.3293 1.63178 18.693 3.3648 18.693H8.7463C8.52841 18.3161 8.34935 17.9139 8.21458 17.4919L3.36452 17.492C2.3205 17.492 1.48538 16.6778 1.48538 15.6601V6.70401L3.7823 6.70387V7.76225C3.7823 8.10833 4.05368 8.37289 4.40867 8.37289C4.76367 8.37289 5.03505 8.10833 5.03505 7.76225V6.70387H10.0461V7.76225C10.0461 8.10833 10.3175 8.37289 10.6725 8.37289C11.0275 8.37289 11.2988 8.10833 11.2988 7.76225V6.70387H13.5956V9.48248C13.7547 9.47015 13.9155 9.46387 14.0778 9.46387C14.3388 9.46387 14.5959 9.48011 14.8483 9.51163V6.07314C14.8483 5.72707 14.5769 5.46251 14.2219 5.46251L11.2988 5.46265V3.93606ZM7.5405 1.45243C8.91853 1.45243 10.046 2.57202 10.046 3.93572V5.4623H5.03498V3.93572C5.03498 2.57188 6.16246 1.45243 7.5405 1.45243Z" fill="#fff"></path>
+          <path d="M14.0773 12.5402C13.6997 12.5402 13.3936 12.8462 13.3936 13.2239V14.9334H11.6841C11.3065 14.9334 11.0004 15.2394 11.0004 15.6171C11.0004 15.9947 11.3065 16.3008 11.6841 16.3008H13.3936V18.0103C13.3936 18.3879 13.6997 18.694 14.0773 18.694C14.455 18.694 14.761 18.3879 14.761 18.0103V16.3008H16.4705C16.8482 16.3008 17.1542 15.9947 17.1542 15.6171C17.1542 15.2394 16.8482 14.9334 16.4705 14.9334H14.761V13.2239C14.761 12.8462 14.455 12.5402 14.0773 12.5402Z" fill="#fff"></path>
+        </svg>
+        <!-- ADD TO CART SVG -->
+      </button>
+    </form>
+
+  {% else %}
+    <button type="button" class="cart-button none collection" disabled>Sold Out</button>
+  {% endif %}
+</div>

@@ -1,0 +1,80 @@
+{% comment %} snippets/card-product-sku.liquid {% endcomment %}
+<div class="card-wrapper product-card-wrapper underline-links-hover">
+  <div class="card card--{{ settings.card_style }}" style="--ratio-percent: 100%;">
+    <div class="card__inner b-dis-block ratio" style="--ratio-percent: 100%;">
+      {%- if card_product.featured_media -%}
+        <div id="product{{ card_product.id }}" class="carousel slide" data-ride="carousel" data-interval="false">
+          <div class="carousel-inner-1">
+            <div class="carousel-item active">
+              <a href="{{ card_product.url }}" class="full-unstyled-link align-left font-18 new-font">
+                <img class="d-block w-100"
+                  src="{{ card_product.featured_media | img_url: '533x' }}"
+                  alt="{{ card_product.featured_media.alt | escape }}"
+                  loading="{% if lazy_load %}lazy{% else %}eager{% endif %}"
+                >
+              </a>
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="card__content">
+      <div class="card__information">
+        <h3 class="card__heading">
+          <a href="{{ card_product.url }}" class="full-unstyled-link align-left font-18 new-font">
+            {{ card_product.title | escape }}
+          </a>
+        </h3>
+
+        <div class="card-information">
+          {%- if show_vendor -%}
+            <span class="visually-hidden">{{ 'accessibility.vendor' | t }}</span>
+            <div class="caption-with-letter-spacing light">{{ card_product.vendor }}</div>
+          {%- endif -%}
+
+          {% render 'price', product: card_product, price_class: '', show_compare_at_price: true %}
+          
+          <div class="card__badge {{ settings.badge_position }}">
+            <span class="sku-match-badge">
+              SKU MATCH
+            </span>
+            
+            {%- liquid
+              assign difference = card_product.compare_at_price | minus: card_product.price
+              if card_product.compare_at_price > 0 and difference > 0
+                assign discount_percentage = difference | times: 1.0 | divided_by: card_product.compare_at_price | times: 100 | round
+              endif
+            -%}
+            
+            {%- if card_product.available == false -%}
+              <span class="sold-out-badge color-{{ settings.sold_out_badge_color_scheme }}">
+                {{ 'products.product.sold_out' | t }}
+              </span>
+            {%- elsif card_product.compare_at_price > card_product.price -%}
+              <span class="price-badge color-{{ settings.sale_badge_color_scheme }}">
+                ({{- discount_percentage }}% OFF)
+              </span>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .sku-match-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: {{ settings.colors_accent_1 }};
+    color: {{ settings.colors_solid_button_labels }};
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+</style>

@@ -1,0 +1,63 @@
+<div id="filters-container" class="facets-container">
+  <facet-filters-form class="facets small-hide">
+    <form id="FacetFiltersForm" class="facets__form">
+      {%- if results.terms -%}
+        <input type="hidden" name="q" value="{{ results.terms | escape }}">
+        <input name="options[prefix]" type="hidden" value="last">
+      {%- endif -%}
+
+      {% if enable_filtering %}
+        <div id="FacetsWrapperDesktop" class="facets__wrapper">
+          <h2 class="facets__heading caption-large text-body" id="verticalTitle" tabindex="-1">
+            {{ 'products.facets.filter_by_label' | t }}
+          </h2>
+          <div class="active-facets active-facets-desktop">
+            {%- unless results.filters == empty -%}
+              <facet-remove class="active-facets__button-wrapper">
+                <a href="{{ results_url }}" class="active-facets__button-remove underlined-link">
+                  <span>{{ 'products.facets.clear_all' | t }}</span>
+                </a>
+              </facet-remove>
+            {%- endunless -%}
+            {%- for filter in results.filters -%}
+              {%- for value in filter.active_values -%}
+                <facet-remove>
+                  <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
+                    <span class="active-facets__button-inner button button--tertiary">
+                      {{ filter.label | escape }}: {{ value.label | escape }}
+                      {% render 'icon-close-small' %}
+                      <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
+                    </span>
+                  </a>
+                </facet-remove>
+              {%- endfor -%}
+              {% if filter.type == 'price_range' %}
+                {%- if filter.min_value.value != null or filter.max_value.value != null -%}
+                  <facet-remove>
+                    <a href="{{ filter.url_to_remove }}" class="active-facets__button active-facets__button--light">
+                      <span class="active-facets__button-inner button button--tertiary">
+                        {%- if filter.min_value.value -%}
+                          {{ filter.min_value.value | money }}
+                        {%- else -%}
+                          {{ 0 | money }}
+                        {%- endif -%}
+                        -
+                        {%- if filter.max_value.value -%}
+                          {{ filter.max_value.value | money }}
+                        {%- else -%}
+                          {{ filter.range_max | money }}
+                        {%- endif -%}
+                        {% render 'icon-close-small' %}
+                        <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
+                      </span>
+                    </a>
+                  </facet-remove>
+                {%- endif -%}
+              {% endif %}
+            {%- endfor -%}
+          </div>
+        </div>
+      {% endif %}
+    </form>
+  </facet-filters-form>
+</div>

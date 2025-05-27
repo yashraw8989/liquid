@@ -1,0 +1,53 @@
+{% comment %}
+  This is a Shopify section for displaying an image and a video.
+{% endcomment %}
+<style>
+    .img-box-bor-red img {
+      border: 26px solid  {{ section.settings.border_color }};
+  }
+</style>
+<section>
+  <div class="container-fluid pad-lr-0">
+    <div class="row">
+      <div class="col-lg-5 col-sm-12">
+        <div class="img-box-bor-red">
+          <img src="{{ section.settings.image | img_url: 'master' }}" width="100%" alt="Uploaded Image">
+        </div>
+      </div>
+      <div class="col-lg-7 col-sm-12">
+        <video width="100%" class="vido-internal" autoplay loop muted playsinline >
+          <source src="{{ section.settings.video }}" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Image and Video Section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Upload Image"
+    },
+    {
+      "type": "url",
+      "id": "video",
+      "label": "Upload Video (MP4 format)"
+    },
+        {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#fb0915"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image and Video Section",
+      "category": "Media"
+    }
+  ]
+}
+{% endschema %}

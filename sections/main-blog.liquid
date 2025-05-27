@@ -1,0 +1,454 @@
+{{ 'component-article-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'section-main-blog.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{% if blog.metafields.custom.category_image %}
+<div class="container-fluid testing2 ">
+  <div class="row">
+  {% if template == 'blog' and request.path contains 'tagged' %}
+      {% assign tag = request.path | split: '/' | last %}
+
+{% assign image_url = '' %}
+
+{% if tag == 'woman' %}
+  {% assign image_url = 'https://ebodycare.in/cdn/shop/files/Body-X-Men-Innerwear_2000x.jpg?v=1724478525' %}
+{% elsif tag == 'lifestyle' %}
+  {% assign image_url = 'https://ebodycare.in/cdn/shop/files/Bodyactive-landing-page_31989724-2130-45bb-9365-8a50460fe99c_2000x.jpg?v=1724926354' %}
+{% elsif tag == 'man' %}
+  {% assign image_url = 'https://ebodycare.in/cdn/shop/files/Body-X-Men-Innerwear_2000x.jpg?v=1724478525' %}
+{% elsif tag == 'sports' %}
+  {% assign image_url = 'https://ebodycare.in/cdn/shop/files/Body-X-Men-Innerwear_2000x.jpg?v=1724478525' %}
+{% endif %}
+
+{% if image_url %}
+  <img src="{{ image_url }}" width="100%" class="" alt="{{ tag | escape }}">
+{% else %}
+  <img src="{{ blog.metafields.custom.category_image | img_url: 'master' }}" width="100%" class="" alt="{{ blog.title | escape }}">
+{% endif %}
+
+     {% else %} <img src="{{ blog.metafields.custom.category_image | img_url: 'master' }}" width="100%" class="" alt="{{ blog.title | escape }}"> 
+{% endif %}
+
+    
+  
+<div class="custom-title-area">  
+  <h1 class="title--primary{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+    {% if template == 'blog' and request.path contains 'tagged' %}
+      {% assign tag = request.path | split: '/' | last %}
+      {% if tag %}
+        Blogs – tagged "{{ tag | escape }}"
+      {% else %}
+        Blogs – tagged "Unknown"
+      {% endif %}
+    {% else %}
+      {{ blog.title | escape }}
+    {% endif %}
+  </h1>
+
+</div>
+  </div>
+  </div>
+  <style>
+
+.blog-sidebar {
+    padding: 0 150px 40px 40px !important;
+
+}
+.main-blog.page-width.section-template--17099647156382__main-padding {
+    padding-bottom: 0;
+}
+    
+    
+.blog-articles{
+  display:block;
+}
+
+.blog-articles__article .color-scheme-2 {
+    height: 300px !important;
+}
+    
+    .container-fluid.testing2 {
+    margin-bottom: 0rem !important;
+    position: relative;
+}
+    .main-blog {
+          margin-top: 0;padding-top: 0;
+    }
+.main-blog .custom-blog-left p.article-card__excerpt{
+    /* font-size: 22px !important; */
+    font-weight: 400 !important;
+    color: rgb(0 0 0 / 75%) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    }
+  .testing2   h1.title--primary.scroll-trigger.animate--fade-in {
+     position: absolute;
+
+    padding: 13px 14rem;
+    bottom: 3px !important;
+    top: 85%;
+    /* height: 94px; */
+    height: 97px;
+
+  background: #fffffff0 0% 0% no-repeat padding-box;
+    /* box-shadow: 0px 5px 8px #00000029; */
+    /* border-radius: 0px 0px 25px 25px; */
+    opacity: 1;
+    backdrop-filter: blur(1px);
+    z-index: 91;
+    }
+    /* nav.page-width.breadcrumbs{
+    padding: 0 15px;
+} */
+   .Breadcrumbs_custom_blogs svg {
+      width: 15px;
+    height: 15px;
+    /* margin: 0px 6px; */
+    margin-left: 0;
+    fill: #7f8587;
+        
+}
+   .Breadcrumbs_custom_blogs nav {
+    padding-bottom: 0;
+}
+    .Breadcrumbs_custom_blogs {
+    background: #ffffff;
+    padding-top: 20px;
+    margin-bottom: 2rem !important;
+}
+
+   
+    .Breadcrumbs_custom_blogs li a{
+          font-size: 14px; color: #221f208c; display: inline-block !important;
+    }
+
+   
+    .Breadcrumbs_custom_blogs li{
+      color:#000000;    display: inline-block;
+    }
+    li.current-page-breadcrumbs {
+    color: #ff0000;
+}
+.Breadcrumbs_custom_blogs ol {
+    display: flex;
+    /* gap: 15px; */
+    list-style: none;
+  margin-left:15px;
+}
+.Breadcrumbs_custom_blogs ul{
+    padding-right: 15px;
+    padding-left: 15px;
+}
+    .Blog-Page-Section4-Tags-Div {
+    overflow-x: auto;
+    display: flex
+;
+    justify-content: center;
+    margin-bottom: 2%;
+    margin: 0px auto;
+    gap: 5rem;
+    margin-bottom: 3rem;
+}
+    .Blog-Page-Section4-Tags a {
+    margin: 0;
+    text-decoration: none;
+    color: #ed1d23;
+    font-size: 24px;    padding-bottom: 3px;
+}
+   .Blog-Page-Section4-Tags a.active {
+    border-bottom: 2px solid red;
+}
+   @media only screen and (max-width: 768px) {
+     .Blog-Page-Section4-Tags-Div {
+  
+    gap: 2rem;
+}
+     .Blog-Page-Section4-Tags a {
+    font-size: 18px;
+}
+     .Breadcrumbs_custom_blogs li a {
+    font-size: 12px;
+}
+     .Breadcrumbs_custom_blogs li {
+    font-size: 12px;
+}
+   }
+    
+  </style>
+<!-- Breadcrumbs -->
+
+<div class="Breadcrumbs_custom_blogs">  
+  <nav class="page-width breadcrumbs breadcrumbs-page-width-template--21552949461291__299af03a-28ef-4a4a-b80b-e44acb67cfae" role="navigation" aria-label="breadcrumbs">
+    <!-- <span><a class="left_arrow_achor" href="https://ebodycare.in/blogs/blogs" aria-label="Back Button"> 
+      <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
+        <path d="M20.5827 13L5.41602 13M5.41602 13L11.916 19.5M5.41602 13L11.916 6.5" stroke="#221F20" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </a></span> -->
+    <ul>
+      <li><a href="/" title="Home">Home</a></li>
+      <li><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#121212bf"><path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/></svg></li>
+  
+
+      {% if template == 'blog' and request.path contains 'tagged' %}
+        {% assign tag = request.path | split: '/' | last %}
+            <li> <a href="/blogs/blogs" title="Blogs">Blogs</a></li>  <li><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#121212bf"><path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/></svg></li>
+  
+       <li class="current-page-breadcrumbs">{{ tag | escape }}</li>
+    
+  {% else %}
+   <li class="current-page-breadcrumbs">Blogs</li> 
+          {% endif %}
+    </ul>
+  </nav>
+</div>
+  </div>
+  <!-- Breadcrumbs ends-->
+{% endif %}
+
+{%- paginate blog.articles by 6 -%}
+  
+  <div class="main-blog page-width section-{{ section.id }}-padding">
+ 
+    <div class="blog-articles {% if section.settings.layout == 'collage' %}blog-articles--collage{% endif %} col-md-8 custom-blog-left">
+     <!-- Get the current tag from URL -->
+      {%- assign articles_to_display = blog.articles -%}  <!-- Start with all articles -->
+
+      
+{% assign current_tag = request.path | split: '/' | last %}
+
+
+
+      
+{% if current_tag %}
+        
+        <!-- Filter articles by the current tag -->
+  {%- assign articles_to_display = blog.articles -%}
+
+      {% endif %}
+
+<!-- For tags code start here -->
+       {% if template == 'blog' and request.path contains 'tagged' %}
+
+<div id="all-tags-container"> 
+<div id="onscroll" style="position: unset; margin-top: 0px;">
+  <div class="Blog-Page-Section4-Tags-Div" style="margin-top: 2rem;">
+
+    <!-- WOMAN Tag -->
+      <div class="Blog-Page-Section4-Tags">
+        <a href="/blogs/blogs/tagged/woman" class="{% if current_tag == 'woman' %}active{% endif %}">
+          WOMAN
+        </a>
+      </div> 
+
+      <!-- SPORTS Tag -->
+      <div class="Blog-Page-Section4-Tags">
+        <a href="/blogs/blogs/tagged/sports" class="{% if current_tag == 'sports' %}active{% endif %}">
+          SPORTS
+        </a>
+      </div> 
+
+     <!-- Men Tag -->
+      <div class="Blog-Page-Section4-Tags">
+        <a href="/blogs/blogs/tagged/men" class="{% if current_tag == 'men' %}active{% endif %}">
+          MEN
+        </a>
+      </div> 
+   
+  </div>
+</div>
+</div>
+
+{% endif %}
+<!-- For tags code end here -->
+      {%- for article in articles_to_display -%} 
+        <div
+          class="col-md-6 blog-articles__article article{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+          {% if settings.animations_reveal_on_scroll %}
+            data-cascade
+            style="--animation-order: {{ forloop.index }};"
+          {% endif %}
+        >
+          {%- render 'article-card',
+            article: article,
+            media_height: section.settings.image_height,
+            media_aspect_ratio: article.image.aspect_ratio,
+            show_image: section.settings.show_image,
+            show_date: section.settings.show_date,
+            show_author: section.settings.show_author,
+            show_excerpt: true
+          -%}
+
+          
+        </div>
+      {%- endfor -%}
+
+        {%- if paginate.pages > 1 -%}
+      {%- render 'pagination', paginate: paginate -%}
+          
+    {%- endif -%}
+      
+    </div>
+
+  
+
+  </div>
+  
+{%- endpaginate -%}
+    {%- include 'blog-sidebar' -%}
+
+
+{% schema %}
+{
+  "name": "t:sections.main-blog.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.main-blog.settings.header.content"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "options": [
+        {
+          "value": "grid",
+          "label": "t:sections.main-blog.settings.layout.options__1.label"
+        },
+        {
+          "value": "collage",
+          "label": "t:sections.main-blog.settings.layout.options__2.label"
+        }
+      ],
+      "default": "collage",
+      "label": "t:sections.main-blog.settings.layout.label",
+      "info": "t:sections.main-blog.settings.layout.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "default": true,
+      "label": "t:sections.main-blog.settings.show_image.label"
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.main-blog.settings.image_height.options__1.label"
+        },
+        {
+          "value": "small",
+          "label": "t:sections.main-blog.settings.image_height.options__2.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.main-blog.settings.image_height.options__3.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.main-blog.settings.image_height.options__4.label"
+        }
+      ],
+      "default": "medium",
+      "label": "t:sections.main-blog.settings.image_height.label",
+      "info": "t:sections.main-blog.settings.image_height.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "default": true,
+      "label": "t:sections.main-blog.settings.show_date.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "default": false,
+      "label": "t:sections.main-blog.settings.show_author.label"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:sections.main-blog.settings.paragraph.content"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}
+
+
+<style>
+.blog-articles .blog-articles__article {
+  border:1px solid #ccc;
+  margin:0 13px 13px 0; border-radius:10px;padding: 10px;
+}
+  .blog-articles .blog-articles__article .card--standard .card__media {
+    border-radius: 10px !important;
+}
+  h1.title--primary.scroll-trigger.animate--fade-in {
+    position: absolute;
+    top: 95%;
+    color: red;
+    font-size: 50px;
+    font-weight: 600;
+    background: #ffffffb5;
+    width: 100%;
+    padding: 0 14rem;
+    text-transform: uppercase;
+
+  }
+
+.Breadcrumbs_custom_blogs ol {
+    display: flex;
+    /* gap: 15px; */
+    list-style: none;
+}
+@media (min-width: 992px) {
+   .blog-articles .blog-articles__article {
+        width: 47.5%;
+    }
+}
+  
+</style>
+
+
+
+
+

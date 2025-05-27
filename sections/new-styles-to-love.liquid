@@ -1,0 +1,93 @@
+<style>
+  .ban_text h2 {
+    font-weight: {{ section.settings.font_weight | default: '800' }};
+    font-size: {{ section.settings.font_size | default: '7' }}rem;
+    line-height: {{ section.settings.line_height | default: '7' }}rem;
+</style>
+<style>
+.rednred-mobile{
+display:none;
+}
+@media (max-width: 749px) {
+.rednred-desk{
+display:none;
+}
+
+
+.rednred-mobile{
+display:block;
+}
+
+}
+</style>
+{% comment %}
+  This is a Shopify section for displaying a banner with text.
+{% endcomment %}
+
+<section class="transmore">
+  <div class="container-fluid pad-lr-0">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="rednred">
+          <a href="{{ section.settings.button_link_onet }}"><img src="{{ section.settings.image | img_url: 'master' }} width="100%" alt="Banner Image" class="rednred-desk"><img src="{{ section.settings.mobile_image | img_url: 'master' }} width="100%" alt="Banner Image" class="rednred-mobile"></a>
+        </div>
+        <div class="ban_text">
+          <h2>{{ section.settings.banner_text | newline_to_br }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "New Styles To Love",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Upload Image"
+    },
+        {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Upload Mobile Image"
+    },
+    {
+      "type": "text",
+      "id": "banner_text",
+      "label": "Banner Text",
+      "default": "New Styles to love"
+    },
+    {
+      "type": "number",
+      "id": "font_size",
+      "label": "Font Size (rem)",
+      "default": 3
+    },
+    {
+      "type": "number",
+      "id": "font_weight",
+      "label": "Font Weight",
+      "default": 800
+    },
+    {
+      "type": "number",
+      "id": "line_height",
+      "label": "Line Height (rem)",
+      "default": 7
+    },
+    {
+      "type": "url",
+      "id": "button_link_onet",
+      "label": "Button Link URL"
+    }
+
+  ],
+  "presets": [
+    {
+      "name": "New Styles To Love",
+      "category": "Text and image"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,881 @@
+<div class="col-md-4 blog-sidebar">
+
+  <!-- Blog Search Form -->
+  
+    <form action="/search" method="get" role="search" class="blog-search-form">
+      <div class="formpart3">
+         <h3>SEARCH</h3>
+        <div class="d-flex">
+                  <div class="search_bar">  
+                      <input type="hidden" name="type" value="article">
+                      <input type="text" name="q" placeholder="Search blog posts..." class="blog-search-input" required>
+                    
+                  </div>
+            <svg class="modal__toggle-open icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none">
+          <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M22 22L20 20" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <a href="#icon-search">
+        </a></svg>
+        </div>
+  
+      </div>
+  </form>
+
+<!-- Top 5 Blog Posts Section -->
+<div class="top-blogs">
+  <h3>TOP 5 BLOG POSTS</h3>
+  <div class="blog_posts">
+    <ul>
+      {% assign global_blog = blogs['blogs'] %} <!-- Replace 'blogs' with your blog handle -->
+      {% if global_blog and global_blog.articles.size > 0 %}
+        {% assign latest_articles = global_blog.articles | sort: "published_at" | reverse %}
+        {% for article in latest_articles limit: 5 %}
+          <li>
+            <a href="{{ article.url }}">{{ article.title }}</a>
+          </li>
+        {% endfor %}
+      {% else %}
+        <li>No blog posts found</li>
+      {% endif %}
+    </ul>
+  </div>
+</div>
+
+ 
+  <!-- Blog Tags Sidebar -->
+<div class="blog-tags">
+  <h3>TAGS</h3>
+  <div class="tags_blogs">
+    <ul>
+          <li>
+            <a href="/blogs/blogs/tagged/men">men</a>
+          </li>
+          <li>
+            <a href="/blogs/blogs/tagged/woman">woman</a>
+          </li>
+          <li>
+            <a href="/blogs/blogs/tagged/sports">sports</a>
+          </li>
+  </ul>
+  <!-- <ul>
+ {% comment %}   {% assign blog_handle = 'blogs' %}
+    {% assign blog = blogs[blog_handle] %}
+
+
+    {% if blog != nil %}
+      {% assign all_tags = "" %}
+
+      {% for article in blog.articles %}
+        {% for tag in article.tags %}
+        
+          {% unless all_tags contains tag %}
+            {% assign all_tags = all_tags | append: tag | append: "," %}
+          {% endunless %}
+        {% endfor %}
+      {% endfor %}
+
+ 
+      {% assign tag_array = all_tags | split: "," | uniq %}
+
+
+      {% for tag in tag_array %}
+        {% if tag != "" %}
+          <li>
+            <a href="/blogs/{{ blog_handle }}/tagged/{{ tag | url_escape }}">{{ tag }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <li>No blog posts found</li>
+    {% endif %} {% endcomment %} 
+  </ul> -->
+  </div>
+</div>
+
+
+
+  
+<!-- Archive -->
+<!-- <div class="archive-form">
+    <h3>Archive</h3>
+   <div class="archive_sidebar_form">
+    <form action="/contact" method="post">
+       <input type="text" name="name" placeholder="" required>
+    </form>
+   </div>
+ </div> --!>
+
+
+
+
+
+
+  <!-- Social Media Icons -->
+  <div class="social-connect">
+    <h3>LET's CONNECT</h3>
+  <div class="social_sidebar">
+    <div class="sidebar-widget__social">
+              <a href="https://www.facebook.com/Bodycareloveyourbody" class="sidebar_facebook ">
+               <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 48 48">
+<path fill="#039be5" d="M24 5A19 19 0 1 0 24 43A19 19 0 1 0 24 5Z"></path><path fill="#fff" d="M26.572,29.036h4.917l0.772-4.995h-5.69v-2.73c0-2.075,0.678-3.915,2.619-3.915h3.119v-4.359c-0.548-0.074-1.707-0.236-3.897-0.236c-4.573,0-7.254,2.415-7.254,7.917v3.323h-4.701v4.995h4.701v13.729C22.089,42.905,23.032,43,24,43c0.875,0,1.729-0.08,2.572-0.194V29.036z"></path>
+</svg>
+              </a>
+              <a href="https://www.instagram.com/Bodycarecreations/" class="sidebar_instagram ">
+               <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 48 48">
+<radialGradient id="yOrnnhliCrdS2gy~4tD8ma_Xy10Jcu1L2Su_gr1" cx="19.38" cy="42.035" r="44.899" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fd5"></stop><stop offset=".328" stop-color="#ff543f"></stop><stop offset=".348" stop-color="#fc5245"></stop><stop offset=".504" stop-color="#e64771"></stop><stop offset=".643" stop-color="#d53e91"></stop><stop offset=".761" stop-color="#cc39a4"></stop><stop offset=".841" stop-color="#c837ab"></stop></radialGradient><path fill="url(#yOrnnhliCrdS2gy~4tD8ma_Xy10Jcu1L2Su_gr1)" d="M34.017,41.99l-20,0.019c-4.4,0.004-8.003-3.592-8.008-7.992l-0.019-20	c-0.004-4.4,3.592-8.003,7.992-8.008l20-0.019c4.4-0.004,8.003,3.592,8.008,7.992l0.019,20	C42.014,38.383,38.417,41.986,34.017,41.99z"></path><radialGradient id="yOrnnhliCrdS2gy~4tD8mb_Xy10Jcu1L2Su_gr2" cx="11.786" cy="5.54" r="29.813" gradientTransform="matrix(1 0 0 .6663 0 1.849)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4168c9"></stop><stop offset=".999" stop-color="#4168c9" stop-opacity="0"></stop></radialGradient><path fill="url(#yOrnnhliCrdS2gy~4tD8mb_Xy10Jcu1L2Su_gr2)" d="M34.017,41.99l-20,0.019c-4.4,0.004-8.003-3.592-8.008-7.992l-0.019-20	c-0.004-4.4,3.592-8.003,7.992-8.008l20-0.019c4.4-0.004,8.003,3.592,8.008,7.992l0.019,20	C42.014,38.383,38.417,41.986,34.017,41.99z"></path><path fill="#fff" d="M24,31c-3.859,0-7-3.14-7-7s3.141-7,7-7s7,3.14,7,7S27.859,31,24,31z M24,19c-2.757,0-5,2.243-5,5	s2.243,5,5,5s5-2.243,5-5S26.757,19,24,19z"></path><circle cx="31.5" cy="16.5" r="1.5" fill="#fff"></circle><path fill="#fff" d="M30,37H18c-3.859,0-7-3.14-7-7V18c0-3.86,3.141-7,7-7h12c3.859,0,7,3.14,7,7v12	C37,33.86,33.859,37,30,37z M18,13c-2.757,0-5,2.243-5,5v12c0,2.757,2.243,5,5,5h12c2.757,0,5-2.243,5-5V18c0-2.757-2.243-5-5-5H18z"></path>
+</svg>
+              </a>
+              <a href="https://twitter.com/ilovebodycare" class="sidebar_twitter">
+             <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 48 48">
+<path fill="#212121" fill-rule="evenodd" d="M38,42H10c-2.209,0-4-1.791-4-4V10c0-2.209,1.791-4,4-4h28	c2.209,0,4,1.791,4,4v28C42,40.209,40.209,42,38,42z" clip-rule="evenodd"></path><path fill="#fff" d="M34.257,34h-6.437L13.829,14h6.437L34.257,34z M28.587,32.304h2.563L19.499,15.696h-2.563 L28.587,32.304z"></path><polygon fill="#fff" points="15.866,34 23.069,25.656 22.127,24.407 13.823,34"></polygon><polygon fill="#fff" points="24.45,21.721 25.355,23.01 33.136,14 31.136,14"></polygon>
+</svg>
+              </a>
+              <a href="https://www.youtube.com/channel/UCyHFpvMc8HwM7Zf1lr1i9vA" class="sidebar_youtube">
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 48 48">
+<path fill="#FF3D00" d="M43.2,33.9c-0.4,2.1-2.1,3.7-4.2,4c-3.3,0.5-8.8,1.1-15,1.1c-6.1,0-11.6-0.6-15-1.1c-2.1-0.3-3.8-1.9-4.2-4C4.4,31.6,4,28.2,4,24c0-4.2,0.4-7.6,0.8-9.9c0.4-2.1,2.1-3.7,4.2-4C12.3,9.6,17.8,9,24,9c6.2,0,11.6,0.6,15,1.1c2.1,0.3,3.8,1.9,4.2,4c0.4,2.3,0.9,5.7,0.9,9.9C44,28.2,43.6,31.6,43.2,33.9z"></path><path fill="#FFF" d="M20 31L20 17 32 24z"></path>
+</svg>
+              </a>
+            </div>
+  </div>
+  </div>
+
+
+
+
+
+  
+<!-- Contact us -->
+  <div class="sticky-part"  id="sticky">
+ <div class="contact_us" >
+    <h3>Contact Us</h3>
+   <div class="contact_us_sidebar">
+  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d875.5374519479435!2d77.38140889870476!3d28.625271900922826!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ceff7174b96a5%3A0x1ae4fca0d3f1b7b3!2sBodycare%20Creations%20Limited!5e0!3m2!1sen!2sin!4v1729229578078!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+ <div class="contact_us_text">
+     <ul class="footer-widget__explore-list">
+              <li>
+                <p >
+                  <b>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 13.4304C13.7231 13.4304 15.12 12.0336 15.12 10.3104C15.12 8.5873 13.7231 7.19043 12 7.19043C10.2769 7.19043 8.88 8.5873 8.88 10.3104C8.88 12.0336 10.2769 13.4304 12 13.4304Z" stroke="black" stroke-width="1.5"></path>
+                      <path d="M3.62001 8.49C5.59001 -0.169998 18.42 -0.159997 20.38 8.5C21.53 13.58 18.37 17.88 15.6 20.54C13.59 22.48 10.41 22.48 8.39001 20.54C5.63001 17.88 2.47001 13.57 3.62001 8.49Z" stroke="black" stroke-width="1.5"></path>
+                    </svg>
+                  </b>
+                  D-30 Sector-63 Noida Uttar Pradesh, 201301
+                </p>
+                <p></p>
+              </li>
+
+              <li>
+                <p>
+                  <b>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M21.97 18.33C21.97 18.69 21.89 19.06 21.72 19.42C21.55 19.78 21.33 20.12 21.04 20.44C20.55 20.98 20.01 21.37 19.4 21.62C18.8 21.87 18.15 22 17.45 22C16.43 22 15.34 21.76 14.19 21.27C13.04 20.78 11.89 20.12 10.75 19.29C9.6 18.45 8.51 17.52 7.47 16.49C6.44 15.45 5.51 14.36 4.68 13.22C3.86 12.08 3.2 10.94 2.72 9.81C2.24 8.67 2 7.58 2 6.54C2 5.86 2.12 5.21 2.36 4.61C2.6 4 2.98 3.44 3.51 2.94C4.15 2.31 4.85 2 5.59 2C5.87 2 6.15 2.06 6.4 2.18C6.66 2.3 6.89 2.48 7.07 2.74L9.39 6.01C9.57 6.26 9.7 6.49 9.79 6.71C9.88 6.92 9.93 7.13 9.93 7.32C9.93 7.56 9.86 7.8 9.72 8.03C9.59 8.26 9.4 8.5 9.16 8.74L8.4 9.53C8.29 9.64 8.24 9.77 8.24 9.93C8.24 10.01 8.25 10.08 8.27 10.16C8.3 10.24 8.33 10.3 8.35 10.36C8.53 10.69 8.84 11.12 9.28 11.64C9.73 12.16 10.21 12.69 10.73 13.22C11.27 13.75 11.79 14.24 12.32 14.69C12.84 15.13 13.27 15.43 13.61 15.61C13.66 15.63 13.72 15.66 13.79 15.69C13.87 15.72 13.95 15.73 14.04 15.73C14.21 15.73 14.34 15.67 14.45 15.56L15.21 14.81C15.46 14.56 15.7 14.37 15.93 14.25C16.16 14.11 16.39 14.04 16.64 14.04C16.83 14.04 17.03 14.08 17.25 14.17C17.47 14.26 17.7 14.39 17.95 14.56L21.26 16.91C21.52 17.09 21.7 17.3 21.81 17.55C21.91 17.8 21.97 18.05 21.97 18.33Z" stroke="black" stroke-width="1.5" stroke-miterlimit="10"></path>
+                    </svg>
+                  </b>
+                  0120-4686444, 9667744151
+                </p>
+              </li>
+              <li>
+                <p>
+                  <b>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M17 20.5H7C4 20.5 2 19 2 15.5V8.5C2 5 4 3.5 7 3.5H17C20 3.5 22 5 22 8.5V15.5C22 19 20 20.5 17 20.5Z" stroke="black" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M17 9L13.87 11.5C12.84 12.32 11.15 12.32 10.12 11.5L7 9" stroke="black" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </b>
+                  wecare@bodycarecreations.com
+                </p>
+              </li>
+
+          
+            </ul>
+
+   </div>
+ </div>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+    
+  <!-- Quick Contact Form --> 
+<br/>
+  <div class="quick-contact-form">
+    <h3>Quick Contact</h3>
+    <div class="quick_contact_sidebar">
+    <form action="/contact" method="post">
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      <textarea name="message" placeholder="Your Message" required></textarea>
+      <button type="submit">SUBMIT</button>
+    </form>
+    </div>
+  </div>
+  
+</div>
+</div>
+
+<style>
+@media(min-width:1200px){
+    .sticky {
+     position: fixed;
+    top: 0;
+    right: 192px;
+    width: 330px;
+}
+}
+
+  @media(min-width:1200px) and (max-width:1500px){
+    .sticky {
+    position: fixed;
+    top: 0;
+    right: 2%;
+    width: 22%;
+}
+  }
+  .blog-sidebar {
+    padding:0 40px 40px 40px;
+    
+    border-radius: 8px;
+    
+  }
+
+  .blog-search-form, .top-blogs, .blog-tags, .quick-contact-form {
+    margin-bottom: 20px;
+  }
+
+  .blog-search-input {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+
+  .blog-search-button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .top-blogs ul, .blog-tags ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .top-blogs ul li, .blog-tags ul li {
+    margin: 8px 0;
+  }
+
+  .social-connect a {
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  .quick-contact-form input, .quick-contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;    font-weight: normal;
+  }
+
+ 
+  }
+
+.blog-tags ul li a, .top-blogs ul li a {
+    color: #7e7e7e;
+}
+
+.sidebar-widget__social {
+    display: flex;
+    /* gap: 20px; */
+}
+
+.h1, .h2, .h3, h1, h2, h3 {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+
+.formpart3 h3 {
+    background: #d9d9d9;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+
+.article-template__content strong {
+    font-weight: normal;
+}
+
+
+  
+
+/* Ashutosh start*/
+
+.testing2 h1.title--primary.scroll-trigger.animate--fade-in ,.testing2 img{
+    display: none;
+}
+
+
+
+.social_sidebar {
+    padding: 10px;
+}
+
+.social-connect {
+    background: #ededed;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+.social-icons {
+    margin-bottom: 12px;
+    display: flex;
+    gap: 8px;
+}
+
+
+.sidebar-widget__social {
+    margin-top: 0px !important;
+    background: white;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+  
+
+.article-card .card__heading {
+    margin-bottom: 0;
+    text-align: left;
+    color: black;
+  text-transform: uppercase;
+}
+.article-template__title:not(:only-child) {
+    margin-bottom: 0.7rem;
+    text-transform: capitalize;
+}
+
+
+
+  
+.main-blog .card--standard>.card__content .card__information {
+    padding-left: 0;
+    padding-right: 0;
+    text-align: left !important;
+    margin-bottom: 0rem;
+}
+
+
+
+  
+  
+.blog-articles__article .color-scheme-2{
+  height:100%;
+}
+
+.full-unstyled-link {
+        text-decoration: none;
+    color: currentColor;
+    display: block;
+    font-size: 28px;
+    padding-top: 10px;
+    text-transform: capitalize;
+    font-weight: 700;
+}
+
+.custom-blog-left a.article-card__read-more {
+    color: #fe0008;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 15px;
+}
+.custom-blog-left h2.card__heading.h2, .custom-blog-left .article-card__info.caption-with-letter-spacing.h5, .custom-blog-left .card__information {
+    text-align: left;
+    margin-bottom: 20px;padding-top: 0;
+}
+  .article-template__hero-containers.scroll-trigger.animate--fade-in,.Breadcrumbs_custom_blogs {
+    
+    margin: auto;
+    margin-bottom: 0 !important;
+}
+
+.custom-blog-left p.article-card__excerpt {
+    margin: 0;
+    text-align: left;
+   
+   
+   font-size: 16px !important;
+    font-weight: 400 !important;
+       color: rgba(var(--color-foreground), 0.75);
+}
+
+.article-template__hero-containers.scroll-trigger.animate--fade-in {
+    margin-bottom: 6rem;
+  margin-top:0;
+}
+
+
+
+  
+.circle-divider {
+     font-size: 14px;
+    color: #221f208c;
+    text-transform: capitalize;
+    font-weight: normal;
+}
+
+
+
+
+
+.blog-search-form {
+    background: #ededed;
+   
+    border-radius: 10px;
+}
+
+
+.blog-search-input {
+    padding: 5px;
+ 
+    width: 95% !important;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 0 !important;font-weight: normal;
+}
+
+.modal__toggle-open {
+    display: flex;
+}
+
+.svg {
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.div {
+    width: 90% !important;
+}
+.top-blogs {
+    background:#ededed;
+   
+    border-radius: 10px;
+}
+
+.blog-tags {
+   
+    background:#ededed;
+    border-radius: 10px;
+}
+
+
+.quick-contact-form {
+    background:#ededed;
+    
+    border-radius: 10px;
+}
+
+.archive-form {
+    margin-bottom: 20px;
+    background:#ededed;
+   
+    border-radius: 10px;
+}
+input[type="text"] {
+    border: none;
+      border-radius: 5px;
+      width: 100%;
+    padding: 10px;
+   
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+.search_bar {
+    width: 100%;
+}
+
+.d-flex {
+    display: flex !important;
+    align-items: center;
+}
+
+.contact_us {
+   
+   background:#ededed;
+    border-radius: 10px;
+  
+}
+.formpart3 h3 {
+    background: #d3d3d3;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.top-blogs h3 {
+    background: #d3d3d3;
+    border-radius: 5px;
+    padding: 5px;
+  
+
+}
+
+.top-blogs ul {
+     background: white;
+    padding: 10px !important;
+    border-radius: 5px;
+    margin: 0;
+}
+
+
+.blog-tags h3 {
+    background: #d3d3d3;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+
+
+
+.sidebar-widget__social {
+    margin-top: 10px;
+}
+
+.archive-form h3 {
+    
+    background: #d3d3d3;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.quick-contact-form h3 {
+    background: #d3d3d3;
+    padding: 5px;
+    border-radius: 5px;
+
+}
+.contact_us h3{
+      background: #d3d3d3;
+    padding: 5px;
+    border-radius: 5px;
+}
+.blog-tags ul {
+    
+    background: white;
+    padding: 10px !important;
+    border-radius: 5px;
+    margin: 0;
+}
+
+
+.blog-sidebar h3 {
+    text-transform: uppercase;
+    font-weight: 400;
+    color: #000;
+    font-size: 20px;
+    background: #ededed;
+    border-radius: 4px 4px 0 0;
+    padding: 10px 10px;
+    margin: 0;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 0px 0px -1px;
+}
+
+
+
+
+.d-flex {
+    display: flex !important;
+    align-items: center;
+    padding: 10px;
+}
+
+.blog_posts {
+    padding: 10px;
+}
+.tags_blogs {
+    padding: 10px;
+}
+.archive_sidebar_form {
+    padding: 10px;
+}
+
+.quick_contact_sidebar {
+    padding: 10px;
+}
+
+.contact_us_sidebar {
+    padding: 10px;
+}
+
+
+
+.contact_us_sidebar iframe {
+    width: 100%;
+    height: 50%;
+}
+
+.contact_us_text ul li p{
+  color:rgb(0 0 0 / 80%) !important;
+}
+
+
+
+/* .page-width{
+  padding:0;
+} */
+
+
+
+
+.quick-contact-form button {
+    padding: 0px 25px;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 20px;
+    text-align: right;
+    font-weight: 400;
+    background: red;
+    width: auto;
+}
+
+
+  
+.container-fluid.testing2 {
+    margin-bottom: 6rem;
+}
+
+.blog-tags ul li a, .top-blogs ul li a {
+       color: rgb(0 0 0 / 80%) !important;
+    font-weight: normal;    text-transform: capitalize;
+}
+
+
+.single-blog-content.col-md-8 {
+    margin-bottom: 5rem;
+}
+
+.blog-articles.blog-articles--collage.col-md-9.custom-blog-left {
+    margin-bottom: 10rem;
+}
+
+
+.full-unstyled-link:hover {
+    color: #000;
+}
+
+.single-blog-content.col-md-9 {
+    margin-bottom: 5rem;
+}
+
+
+
+section#shopify-section-breadcrumb {
+    display: none;
+}
+
+
+
+  
+  
+/*single page*/
+
+ .page-width--narrow p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+       color: rgba(var(--color-foreground), 0.75);
+    line-height: 28px;
+}
+  
+.h1, .h2, .h3, h1, h2, h3 {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: black;
+}
+
+
+h2{
+  font-size:28px;
+}
+
+
+
+article.article-template h3 {
+    font-size: 20px;
+    font-weight: normal;
+}
+  
+h1.article-template__title {
+    font-size: 34px !important;
+    color: black;
+}
+  
+.article-template__content ul li {
+       font-size: 16px !important;
+       font-weight: 400 !important;
+       color: rgba(var(--color-foreground), 0.75);
+       line-height: 28px;
+       list-style: disc;
+}
+
+
+.article-template__content ol li {
+       font-size: 16px !important;
+       font-weight: 400 !important;
+       color: rgba(var(--color-foreground), 0.75);
+       line-height: 28px;
+       
+}
+  
+.article-template__content p {
+    margin-bottom: 15px;
+}
+
+.article-template__content ul {
+    margin-bottom: 25px;
+    margin-left: 3rem;
+}
+
+.article-template .rte a {
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    color: #FE0008;
+}
+
+
+@media screen and (min-width: 750px) {
+    .article-template header {
+        margin-top: 0;
+    }
+  
+}
+
+@media (min-width:1300px) {
+  .sidebar-widget__social {
+    gap: 5px;
+}
+}
+  
+/* Ashutosh end*/
+
+
+/*mobile css*/
+
+
+
+@media only screen and (max-width: 768px) {
+    h1.title--primary.scroll-trigger.animate--fade-in {
+        position: relative !important;
+        top: -65px !important;
+        font-size: 20px !important;
+        padding: 0 !important;
+        margin: 0;
+      
+    }
+  .main-blog    .card h3{
+  height:auto;
+}
+
+   .testing2 h1.title--primary.scroll-trigger.animate--fade-in {
+ 
+    /* height: 94px; */
+    height: 26px;
+    top: -33px !important;
+}
+
+  
+.container-fluid.testing2 {
+    margin: 0;
+}
+
+.full-unstyled-link {
+    font-size: 30px;
+}
+
+.custom-blog-left p.article-card__excerpt {
+    font-size: 14px !important;!i;!;
+}
+
+.custom-blog-left a.article-card__read-more {
+    font-size: 16px;
+}
+
+.blog-articles.blog-articles--collage.col-md-9.custom-blog-left {
+    margin-bottom: 0;
+}
+
+.blog-sidebar {
+    padding: 0 15px;
+    margin-bottom: 5rem;
+}
+
+  h1.article-template__title {
+    font-size: 26px !important;
+}
+article.article-template h2 {
+    font-size: 22px;
+  }
+.article-template__hero-containers.scroll-trigger.animate--fade-in {
+    margin-bottom: 3rem;
+}
+
+.page-width--narrow p {
+    font-size: 15px !important;
+    font-weight: 400 !important;  
+}
+.article-template__content ul li {
+    font-size: 15px !important;
+    font-weight: 400 !important;
+   
+}
+
+  .article-template__content ol li {
+    font-size: 15px !important;
+    font-weight: 400 !important;
+   
+}
+.article-template .rte a {
+    font-size: 15px !important;
+    font-weight: 400 !important;
+    
+}
+  
+}
+
+@media only screen and (min-width: 1219px) and (max-width: 1530px) {
+ .blog-sidebar {
+    padding: 0 20px 20px 20px;
+}
+}
+@media only screen and (max-width: 767px) {
+    .page-width {
+        padding: 0px;
+    }
+
+  .single-blog-content.col-md-8 .article-template__hero-adapt.media {
+    border-radius: 10px;
+    height: 100%;
+}
+
+  
+}
+</style>
+
+
+

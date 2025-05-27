@@ -1,0 +1,53 @@
+<style>
+.mobile_flex{
+display:none;
+}
+@media (max-width: 749px) {
+.desktop_flex{
+display:none;
+}
+
+
+.mobile_flex{
+display:block;
+}
+
+}
+</style>
+<section class="pad-bottom-40"  data-aos="fade-down" data-aos-easing="linear" data-aos-duration="2000"
+     data-aos-anchor-placement="center-bottom">
+  <div class="container-fluid">
+     <a href="{{ section.settings.button_link_two }}"><div class="row">
+     <img src="{{ section.settings.image_source | img_url: 'master' }}" width="100%" class="desktop_flex">
+       <img src="{{ section.settings.mobile_image_source | img_url: 'master' }}" width="100%" class="mobile_flex">
+    </div></a>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "flex",
+  "settings": [
+     {
+      "type": "url",
+      "id": "button_link_two",
+      "label": "Button Link URL"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_source",
+      "label": "Image Source"
+    },
+        {
+      "type": "image_picker",
+      "id": "mobile_image_source",
+      "label": "Mobile Image Source"
+    }
+  ],
+  "presets": [
+    {
+      "name": "flex"
+    }
+  ]
+}
+{% endschema %}

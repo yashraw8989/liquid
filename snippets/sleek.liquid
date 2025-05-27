@@ -1,0 +1,35 @@
+<script type="text/javascript">
+      function _saveAttributes() {
+        var sleekCompanyName = document.getElementsByName("attributes[sleek_company_name]")[0].value;
+        var sleekgstin = document.getElementsByName("attributes[sleekgstin]")[0].value;
+        var successTick = document.getElementById("successTick");
+    
+        fetch("".concat("cart/update.js"), {
+          body: JSON.stringify({
+            attributes: {"sleek_company_name": sleekCompanyName, "sleekgstin": sleekgstin}
+          }),
+          credentials: "same-origin",
+          method:"POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        });
+    
+        if (sleekCompanyName != "" && sleekgstin != "") {
+          successTick.style.removeProperty("display");
+        }
+      }
+    </script>
+    <div>
+      <label for="company_name" style="display: inline-block;margin-right: 10px;text-align: left;">Company Name:</label>
+      <input type="text" name="attributes[sleek_company_name]" form="cart" placeholder="Add Company name (optional)" size="35" style="max-width: 300px;display: inline-block;margin-bottom: 15px;">
+    </div>
+    <div>
+      <label for="gst" style="display: inline-block;margin-right: 10px;">GST Number:</label>
+      <input type="text" name="attributes[sleekgstin]" form="cart" placeholder="Add GST number (optional)" size="35" maxlength="15" style="max-width: 300px; display: inline-block;">
+    </div>
+    <div style="margin-top: 15px;">
+      <button type="button" class="button button--secondary" onclick="_saveAttributes();">Save</button>
+      <span id="successTick" style="font-weight: 1000; font-size: 20px; color: #068f06; padding-left: 20px; display: none;">&#10003;</span>
+    </div>

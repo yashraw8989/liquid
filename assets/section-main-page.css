@@ -1,0 +1,30 @@
+.page-title {
+  margin-top: 0;
+}
+
+.main-page-title {
+  margin-bottom: 3rem;
+}
+.page-content h2 {
+    margin-bottom: 20px;
+}
+.page-content h3 {
+    margin: 10px 0;
+}
+@media screen and (min-width: 750px) {
+     .main-page-title {
+        margin-bottom: 4rem;
+        text-align: center;
+        letter-spacing: 2px;
+    }
+}
+
+.page-placeholder-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.page-placeholder {
+  width: 52.5rem;
+  height: 52.5rem;
+}

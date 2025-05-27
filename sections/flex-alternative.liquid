@@ -1,0 +1,73 @@
+<section class="pad-bottom-50">
+  <div class="container-fluid pad-lr-0">
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"  data-aos="fade-right" data-aos-easing="linear" data-aos-duration="2000"
+     data-aos-anchor-placement="center-bottom">
+        <a href="{{ section.settings.link1 }}">
+          <div class="imd-div-two">
+            <img src="{{ section.settings.image1_source | img_url: 'master' }}" class="img-fluid width-100">
+            <div class="text-img">
+              <h3>{{ section.settings.text1 }}</h3>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"  data-aos="fade-left" data-aos-easing="linear" data-aos-duration="2000"
+     data-aos-anchor-placement="center-bottom">
+        <a href="{{ section.settings.link2 }}">
+          <div class="imd-div-two">
+            <img src="{{ section.settings.image2_source | img_url: 'master' }}" class="img-fluid width-100">
+            <div class="text-img">
+              <h3>{{ section.settings.text2 }}</h3>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Flex Alternative",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image1_source",
+      "label": "Image 1 Source"
+    },
+    {
+      "type": "text",
+      "id": "text1",
+      "label": "Text 1",
+      "default": "For Him"
+    },
+    {
+      "type": "url",
+      "id": "link1",
+      "label": "Link 1 URL"
+    },
+    {
+      "type": "image_picker",
+      "id": "image2_source",
+      "label": "Image 2 Source"
+    },
+    {
+      "type": "text",
+      "id": "text2",
+      "label": "Text 2",
+      "default": "For Him"
+    },
+    {
+      "type": "url",
+      "id": "link2",
+      "label": "Link 2 URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flex Alternative"
+    }
+  ]
+}
+{% endschema %}

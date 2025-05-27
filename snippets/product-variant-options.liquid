@@ -1,0 +1,242 @@
+{%- comment -%}
+  Renders product variant options
+
+  Accepts:
+  - product: {Object} product object.
+  - option: {Object} current product_option object.
+  - block: {Object} block object.
+  - picker_type: {String} type of picker to display
+
+  Usage:
+  {% render 'product-variant-options',
+    product: product,
+    option: option,
+    block: block,
+    picker_type: picker_type
+  %}
+{%- endcomment -%}
+<style>
+  label#variant_disabled {
+    background: linear-gradient(to top left, #eff1f4 calc(50% - 1px), #c1bcbc, #eff1f4 calc(50% + 1px));    color: #7c7171;
+}
+  .variant-swatch__item {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #ddd;
+    margin: 5px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .variant-swatch__item input {
+    display: none;
+  }
+
+  .variant-swatch__item label {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .variant-swatch__item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const swatches = document.querySelectorAll('.variant-swatch__item');
+    const mainImage = document.querySelector('.main-product-image'); // Adjust selector to match your main image
+
+    swatches.forEach(function(swatch) {
+      swatch.addEventListener('click', function() {
+        if (this.classList.contains('disabled')) return;
+
+        const variantId = this.getAttribute('data-variant-id');
+        const variantImage = this.getAttribute('data-variant-image');
+
+        // Update main image
+        if (variantImage) {
+          mainImage.setAttribute('src', variantImage);
+        }
+
+        // Update selected class
+        swatches.forEach(function(s) {
+          s.classList.remove('selected');
+        });
+        this.classList.add('selected');
+
+        // Update the variant selector if present
+        const variantSelector = document.querySelector('select[name="id"]');
+        if (variantSelector) {
+          variantSelector.value = variantId;
+        }
+      });
+    });
+  });
+</script>
+{%- comment -%}
+  Renders product variant options
+
+  Accepts:
+  - product: {Object} product object.
+  - option: {Object} current product_option object.
+  - block: {Object} block object.
+  - picker_type: {String} type of picker to display
+
+  Usage:
+  {% render 'product-variant-options',
+    product: product,
+    option: option,
+    block: block,
+    picker_type: picker_type
+  %}
+{%- endcomment -%}
+{%- liquid
+  assign variants_available_arr = product.variants | map: 'available'
+  assign variants_inventory_arr = product.variants | map: 'inventory_quantity'
+  assign variants_option1_arr = product.variants | map: 'option1'
+  assign variants_option2_arr = product.variants | map: 'option2'
+  assign variants_option3_arr = product.variants | map: 'option3'
+
+  assign product_form_id = 'product-form-' | append: section.id
+-%}
+
+
+
+  {%- for value in option.values -%}
+    {%- liquid
+      assign option_disabled = true
+      assign variant_image = null
+      assign variant_id = null
+
+      for variant in product.variants
+        case option.position
+          when 1
+            if variant.option1 == value
+              if variant.available == false or variant.inventory_quantity <= 0
+                assign option_disabled = true
+              else
+                assign option_disabled = false
+              endif
+              assign variant_image = variant.featured_image
+              assign variant_id = variant.id
+            endif
+          when 2
+            if variant.option1 == product.selected_or_first_available_variant.option1 and variant.option2 == value
+              if variant.available == false or variant.inventory_quantity <= 0
+                assign option_disabled = true
+              else
+                assign option_disabled = false
+              endif
+              assign variant_image = variant.featured_image
+              assign variant_id = variant.id
+            endif
+          when 3
+            if variant.option1 == product.selected_or_first_available_variant.option1 and variant.option2 == product.selected_or_first_available_variant.option2 and variant.option3 == value
+              if variant.available == false or variant.inventory_quantity <= 0
+                assign option_disabled = true
+              else
+                assign option_disabled = false
+              endif
+              assign variant_image = variant.featured_image
+              assign variant_id = variant.id
+            endif
+        endcase
+      endfor
+
+      if variant_image
+        assign image_url = variant_image.src | image_url: '1440x'
+        assign swatch_value = 'url(' | append: image_url | append: ')'
+      else
+        assign swatch_value = null
+      endif
+    -%}
+
+
+    {% comment %} {# Check if variant_id is set, meaning the variant is available #} {% endcomment %}
+    {%- capture input_id -%}
+      {{ section.id }}-{{ option.position }}-{{ forloop.index0 -}}
+    {%- endcapture -%}
+
+    {%- capture label_unavailable %}
+      <span class="visually-hidden label-unavailable">
+        {{- 'products.product.variant_sold_out_or_unavailable' | t -}}
+      </span>
+    {%- endcapture %}
+
+    {%- if picker_type == 'swatch' and option.name == 'Color' -%}
+      {% assign checked = false %}
+      {% if option.selected_value == value %}
+        {% assign checked = true %}
+      {% endif %}
+      <div
+        class="variant-swatch__item"
+        data-variant-id="{{ variant_id }}"
+        data-variant-image="{{ image_url }}"
+        {% if option_disabled %}
+          class="disabled"
+        {% endif %}
+      >
+        <input
+          type="radio"
+          id="{{ input_id }}"
+          name="{{ option.name }}"
+          value="{{ value | escape }}"
+          form="{{ product_form_id }}"
+          {% if checked %}
+            checked
+          {% endif %}
+        >
+        <label for="{{ input_id }}" style="background-image: {{ swatch_value }};">
+          {% if option_disabled %}
+            {{ label_unavailable }}
+          {% endif %}
+        </label>
+      </div>
+    {%- elsif picker_type == 'button' -%}
+      <input
+        type="radio"
+        id="{{ input_id }}"
+        name="{{ option.name }}"
+        value="{{ value | escape }}"
+        form="{{ product_form_id }}"
+        {% if option.selected_value == value %}
+          checked
+        {% endif %}
+        {% if option_disabled %}
+          class="disabled"
+        {% endif %}
+      >
+      <label for="{{ input_id }}" class="custom-input-label"
+         {% if option_disabled %}
+          id="variant_disabled"
+        {% endif %}
+        >
+        {{ value -}}
+        {{ label_unavailable }}
+        
+      </label>
+    {%- elsif picker_type == 'dropdown' or picker_type == 'swatch_dropdown' -%}
+      <option
+        value="{{ value | escape }}"
+        {% if option.selected_value == value %}
+          selected="selected"
+        {% endif %}
+        {% if swatch_value and picker_type == 'swatch_dropdown' %}
+          data-option-swatch-value="{{ swatch_value }}"
+        {% endif %}
+      >
+        {% if option_disabled -%}
+          {{- 'products.product.value_unavailable' | t: option_value: value -}}
+        {%- else -%}
+          {{- value -}}
+        {%- endif %}
+      </option>
+    {%- endif -%}
+
+{%- endfor -%}
+

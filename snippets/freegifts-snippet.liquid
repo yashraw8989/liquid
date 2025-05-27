@@ -1,0 +1,92 @@
+<script>
+  // Redirect to cart when a gift is added
+  document.addEventListener("fg-gifts:added", async () => {
+     window.location.href = '/cart';
+  });
+
+  // Step 1: Detecting applied discounts and BOGOS offers
+  fetch('/cart.js')
+    .then(response => response.json())
+    .then(cart => {
+      const hasShopifyDiscount = cart.total_discount > 0;
+      const hasBogosOffer = cart.items.some(item => item.properties && item.properties._bogos_offer);
+
+      if (hasBogosOffer && hasShopifyDiscount) {
+        blockShopifyDiscount(); // Block Shopify discount if BOGOS is applied first
+      } else if (hasShopifyDiscount) {
+        hideBogosFeatures(); // Hide BOGOS features if Shopify discount is applied
+      } else {
+        showBogosFeatures(); // Show BOGOS features normally
+      }
+    })
+    .catch(error => console.error('Error fetching cart data:', error));
+
+  // Function to hide BOGOS features
+  function hideBogosFeatures() {
+    document.querySelectorAll('#freegifts-main-popup-container, #sca-gift-icon, #sca-gift-thumbnail, #sca-fg-today-offer-widget, #sca-fg-today-offer-iframe, #sca-promotion-message-layout').forEach(element => {
+      element.style.display = 'none';
+    });
+    removeBogosEventListeners();
+  }
+
+  // Function to show BOGOS features
+  function showBogosFeatures() {
+    document.querySelectorAll('#freegifts-main-popup-container, #sca-gift-icon, #sca-gift-thumbnail, #sca-fg-today-offer-widget, #sca-fg-today-offer-iframe, #sca-promotion-message-layout').forEach(element => {
+      element.style.display = '';
+    });
+    addBogosEventListeners();
+  }
+
+  // Function to block Shopify discount application if BOGOS offer is applied first
+  function blockShopifyDiscount() {
+    alert("You cannot apply a Shopify discount when a BOGOS offer is already applied.");
+    const discountInput = document.querySelector('[name="discount"]'); // Adjust selector based on your theme
+    if (discountInput) {
+      discountInput.disabled = true; // Disable discount code input field
+    }
+  }
+
+  // Function to remove BOGOS event listeners
+  function removeBogosEventListeners() {
+    document.removeEventListener("fg-gifts:show-slider", handleShowSlider);
+    document.removeEventListener("fg-gifts:gift-icon", handleGiftIcon);
+    document.removeEventListener("fg-today-offer:render", handleTodayOfferRender);
+    document.removeEventListener("fg-today-offer:success", handleTodayOfferSuccess);
+    document.removeEventListener("fg-messages:render", handleMessagesRender);
+  }
+
+  // Function to add BOGOS event listeners
+  function addBogosEventListeners() {
+    document.addEventListener("fg-gifts:show-slider", handleShowSlider);
+    document.addEventListener("fg-gifts:gift-icon", handleGiftIcon);
+    document.addEventListener("fg-today-offer:render", handleTodayOfferRender);
+    document.addEventListener("fg-today-offer:success", handleTodayOfferSuccess);
+    document.addEventListener("fg-messages:render", handleMessagesRender);
+  }
+
+  // Example event handler functions
+  function handleShowSlider(e) {
+    console.log("fg-gifts:show-slider", e.detail);
+    // Custom logic for show slider event
+  }
+
+  function handleGiftIcon(e) {
+    console.log("fg-gifts:gift-icon", e.detail);
+    // Custom logic for gift icon event
+  }
+
+  function handleTodayOfferRender(e) {
+    console.log("fg-today-offer:render", e.detail);
+    // Custom logic for today offer render event
+  }
+
+  function handleTodayOfferSuccess(e) {
+    console.log("fg-today-offer:success", e.detail);
+    // Custom logic for today offer success event
+  }
+
+  function handleMessagesRender(e) {
+    console.log("fg-messages:render", e.detail);
+    // Custom logic for messages render event
+  }
+</script>

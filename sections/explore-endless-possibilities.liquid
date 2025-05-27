@@ -1,0 +1,175 @@
+<style>
+.bck-head-pink {
+    background-color: {{ section.settings.background_color }};
+}
+.bck-head-pink h2 {
+    color: {{ section.settings.heading_color }};
+}
+    .nionx-btn {
+    background-color: {{ section.settings.button_bg_color }};
+    color: {{ section.settings.button_text_color }};
+    }
+  .nionx-btn:hover {
+    color: {{ section.settings.button_hover_text_color }};
+  }
+.nionx-btn::before {
+    background: {{ section.settings.button_hover_color }};
+}
+  </style>
+
+  <section class="mar_blk2 desktop-hide">
+  <div class="container-fluid pd-0">
+    <div class="marquee">
+      <div class="track2">
+        <div class="conten2t">#EXPLORE ENDLESS POSSIBILITIES #EXPLORE ENDLESS POSSIBILITIES</div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="pad-lr-0 pad-bottom-60">
+  <div class="container-fluid pad-lr-0">
+    <div class="row">
+      <div class="col-lg-12 pad-bottom-30 mobile-hide" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="2000"
+     data-aos-anchor-placement="center-bottom">
+        <div class="bck-head-pink">
+          <h2>{{ section.settings.heading }}</h2>
+        </div>
+      </div>
+      <div class="col-lg-12 ">
+        <div class="row ">
+          <div class="col-lg-6 col-sm-12 col-xs-12" data-aos="fade-right" data-aos-easing="linear" data-aos-duration="2000"
+     data-aos-anchor-placement="center-bottom">
+            <div class="imd-div-2">
+              <a href="{{ section.settings.button_link_one }}"><img src="{{ section.settings.image1_source | img_url: 'master' }}" class="img-fluid width-100"></a>
+            </div>
+          </div>
+          <div class="col-lg-3 col-sm-12 col-xs-12" data-aos="fade-left" data-aos-easing="linear" data-aos-duration="2000"
+     data-aos-anchor-placement="center-bottom">
+            <div class="imd-div-twin">
+              <div class="over-bot-hid"><a href="{{ section.settings.button_link_two }}"><img src="{{ section.settings.image2_source | img_url: 'master' }}" class="img-fluid width-100 image-one"></a></div>
+             <div class="over-bot-hid"> <a href="{{ section.settings.button_link_three }}"><img src="{{ section.settings.image3_source | img_url: 'master' }}" class="img-fluid width-100 mtt-20"></a></div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-sm-3 col-xs-12" data-aos="fade-left" data-aos-easing="linear" data-aos-duration="2000"
+     data-aos-anchor-placement="center-bottom">
+            <div class="imd-div-2">
+              <a href="{{ section.settings.button_link_four }}"><img src="{{ section.settings.image4_source | img_url: 'master' }}" class="img-fluid width-100 m-none"></a>
+            </div>
+          </div>
+        </div>
+        <div class="cta__content-4 text-anim text-center ">
+          <a rel="noreferrer" href="{{ section.settings.button_link }}" class="nionx-btn nionx-btn--base"><span>{{ section.settings.button_text }}</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Endless Possibilities",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "EXPLORE ENDLESS POSSIBILITIES"
+    },
+            {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ecbdd6"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#fe0008"
+    },
+    {
+      "type": "image_picker",
+      "id": "image1_source",
+      "label": "Image 1 Source"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "image2_source",
+      "label": "Image 2 Source"
+    },
+    {
+      "type": "image_picker",
+      "id": "image3_source",
+      "label": "Image 3 Source"
+    },
+    {
+      "type": "image_picker",
+      "id": "image4_source",
+      "label": "Image 4 Source"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link URL"
+    },
+        {
+      "type": "url",
+      "id": "button_link_one",
+      "label": "Button Link URL"
+    },
+        {
+      "type": "url",
+      "id": "button_link_two",
+      "label": "Button Link URL"
+    },
+        {
+      "type": "url",
+      "id": "button_link_three",
+      "label": "Button Link URL"
+    },
+        {
+      "type": "url",
+      "id": "button_link_four",
+      "label": "Button Link URL"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "EXPLORE MORE"
+    },
+
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button Background Color",
+      "default": "#F4F2F9"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#1D1729"
+    },
+
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Button Hover Text Color",
+      "default": "#fe0008"
+    },
+        {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button Hover Color",
+      "default": "#9be2f2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Endless Possibilities"
+    }
+  ]
+}
+
+{% endschema %}

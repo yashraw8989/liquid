@@ -1,0 +1,63 @@
+<style>
+  .mar_blk {
+    background: {{ section.settings.background_color }};
+  }
+
+  /* .content {
+    font-size: {{ section.settings.font_size | default: '5' }}rem;
+    color: {{ section.settings.font_color | default: '#ffffff' }};
+    font-weight: {{ section.settings.font_weight | default: '900' }};
+    line-height: {{ section.settings.line_height | default: '108' }}px;
+    text-transform: {{ section.settings.text_transform | default: 'uppercase' }};
+  } */
+</style>
+
+<section class="mar_blk">
+  <div class="container-fluid pd-0">
+    <div class="marquee">
+      <div class="track">
+        <div class="content">{{ section.settings.message }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Love Your Body",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "message",
+      "label": "Message",
+      "default": "#Love your body"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#fb0915"
+    },
+    
+    {
+      "type": "select",
+      "id": "text_transform",
+      "label": "Text Transform",
+      "default": "uppercase",
+      "options": [
+        { "value": "uppercase", "label": "Uppercase" },
+        { "value": "lowercase", "label": "Lowercase" },
+        { "value": "capitalize", "label": "Capitalize" },
+        { "value": "none", "label": "None" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Love Your Body"
+    }
+  ]
+}
+
+{% endschema %}

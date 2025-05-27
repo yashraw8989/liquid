@@ -1,0 +1,106 @@
+{%- comment -%}
+  b2g1-progress.liquid
+  The original floating B2G1 progress bar snippet
+{%- endcomment -%}
+
+<div class="b2g1-progress cart-progress" style="display:none;">
+  <span class="close-progress">&times;</span>
+  <div class="progress-container">
+    <div class="progress-header">
+      <h3>Buy 2 Get 1 Free Progress</h3>
+      <!-- This shows how many items out of 3 -->
+      <span class="item-count">0/3 items</span>
+    </div>
+    <div class="progress-bar-container">
+      <!-- The bar's fill width is updated by JavaScript -->
+      <div class="progress-bar" style="width: 0%;">&nbsp;</div>
+    </div>
+    <!-- The main message changes dynamically below -->
+    <p class="progress-message">
+      You're almost there! Add a total of 3 items from this page to avail this offer.
+    </p>
+    <!-- The disclaimer text at the bottom -->
+    <span class="tc" style="font-size: small;">
+      *Buy 2 Get 1 Free offer does not allow the same product to appear more than twice. 
+      Please choose a different variant or product to avail this offer
+    </span>
+  </div>
+</div>
+
+<style>
+  .b2g1-progress {
+  position: fixed;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+  display: none; /* shown by JS */
+}
+
+.close-progress {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #666;
+}
+.close-progress:hover {
+  color: #333;
+}
+
+.progress-container { width: 100%; }
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.progress-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+.item-count {
+  font-size: 15px;
+  color: #4b5563;
+  font-weight: 500;
+}
+.progress-bar-container {
+  width: 100%;
+  height: 20px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.progress-bar {
+  background-color: #3b82f6 !important;
+  height: 100%;
+  font-size: 12px;
+  line-height: 20px;
+  color: #fff;
+  text-align: center;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.15);
+  transition: width 0.6s ease, background-color 0.6s ease;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+.progress-bar.complete {
+  background-color: #10b981 !important; /* green when offer complete */
+}
+.progress-message {
+  margin-top: 12px;
+  font-size: 15px;
+  text-align: center;
+  font-weight: 500;
+}
+
+</style>

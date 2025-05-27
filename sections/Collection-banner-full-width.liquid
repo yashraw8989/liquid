@@ -1,0 +1,51 @@
+{%- comment -%}
+  Liquid code for the section
+{%- endcomment -%}
+
+{% assign image_url = section.settings.full_width_image | img_url: 'master' %}
+
+<section class="height-100">
+  <div class="container-fluid">
+    <div class="row">
+      <img src="{{ image_url }}" alt="Full-width image" style="width: 100%;">
+    </div>
+  </div>
+</section>
+{% if collection.handle == 'for-her' %}
+  <div class="szn-calculator">
+    <a href="https://3931fc-56.myshopify.com/pages/bra-size-calculator">
+      <img
+        src="https://cdn.shopify.com/s/files/1/0652/5383/4910/files/Untitled-1_2b718422-ea9b-4884-9df3-c89bb283dfcd.png?v=1720435807"
+        alt="Bra Size Calculator"
+      >
+    </a>
+  </div>
+{% else %}
+  <div class="szn-calculator">
+    <a href="https://3931fc-56.myshopify.com/pages/boxer-size-calculator">
+      <img
+        src="https://cdn.shopify.com/s/files/1/0652/5383/4910/files/Untitled-1_badb394a-281d-4241-abed-bff462414f8a.png?v=1719834045"
+        alt="Bra Size Calculator"
+      >
+    </a>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Full Width Image",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "full_width_image",
+      "label": "Upload Full Width Image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Full Width Image",
+      "category": "Image"
+    }
+  ]
+}
+{% endschema %}

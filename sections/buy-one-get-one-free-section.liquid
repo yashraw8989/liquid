@@ -1,0 +1,481 @@
+{% comment %}
+  File: sections/buy-one-get-one-products.liquid
+  Description: Displays products for "Buy One Get One Free" promotion.
+{% endcomment %}
+
+{{ 'buy-one-get-one.css' | asset_url | stylesheet_tag }}
+
+<main class="buyone-getone-page">
+  <div class="my-container bg-gray">
+    <div class="my-row page-width" style="display: grid; column-gap: 30px; row-gap: 40px;">
+      <div class="col-my-col-6">
+        {% if section.settings.title_image != blank %}
+          <img src="{{ section.settings.title_image | img_url: 'master' }}" alt="{{ section.settings.title_image.alt | escape }}" width="100%" style="border-radius: 10px;">
+        {% endif %}
+      </div>
+      <div class="col-my-col-6" style="height: 100%; border-radius: 5px; display:flex; align-items:center;">
+        <div class="con" style="margin-top: -1rem; text-align: left; font-weight: 200;">
+          {%- if section.settings.heading != blank -%}
+            <h1 style="
+              font-size: clamp(2rem, 1.3vw + 1rem, 4rem) !important;
+              color: {{ section.settings.heading_color | default: '#fe0008' }};
+              text-transform: {{ section.settings.heading_text_transform | default: 'uppercase' }};
+              font-weight: {{ section.settings.heading_font_weight | default: 700 }};
+              line-height: normal;
+              text-align: {{ section.settings.heading_alignment | default: 'left' }};
+            ">
+              {{ section.settings.heading }}
+            </h1>
+          {%- endif -%}
+          {%- if section.settings.subheading != blank -%}
+            <h3 style="text-align: {{ section.settings.subheading_alignment | default: 'left' }};"><b>{{ section.settings.subheading }}</b></h3>
+          {%- endif -%}
+          {%- if section.settings.description != blank -%}
+            <p style="color: #000; margin-top: 2rem; font-weight: 400;">{{ section.settings.description }}</p>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="progressBar page-width">
+    <div class="progress-container">
+      <div class="progress" id="progress"></div>
+      <a href="https://ebodycare.in/pages/buy-1-get-1" class="step1 step-11 active1">
+        <div class="steps1" style="position: relative;">
+          <span style="position: absolute; top: -33px; width: 50px; height: 25px; background: #4caf50; text-align: center; left: -40%; font-size: 10px; line-height: 26px; border-radius: 5px; color: white;">STEP 1</span>
+          <div class="circle active">1</div>
+          <div class="stesp-d" style="position: absolute;  font-size: 11px;  padding-top: 10px;  line-height: 1.3;  width: max-content;  padding: 10px;  margin-top: 1rem;  border-radius: 5px;  background: #fff6f8;  left: -100%;">Select Perfume</div>
+        </div>
+      </a>
+      <a href="https://ebodycare.in/pages/buy-1-get-1-free" class="step1 step-21">
+        <div class="steps2" style="position: relative;">
+          <div class="circle circle2" style="background-color: #bbb9b9; color: white;">2</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</main>
+
+{% assign collection = collections['b1g1-free1'] %}
+{{ 'template-collection.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+
+{% if section.settings.image_shape == 'blob' %}
+  {{ 'mask-blobs.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+{%- if section.settings.enable_quick_add -%}
+  {{ 'quick-add.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .color-filter-button {
+    position: relative;
+    padding-right: 20px; / Space for the cross button /
+  }
+
+  .color-filter-button .remove-filter {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    display: none; / Initially hidden /
+  }
+
+  .color-filter-button.active .remove-filter {
+    display: inline; / Show only for active buttons /
+  }
+  
+  .product-item--out-of-stock {
+    opacity: 0.5;
+    position: relative;
+  }
+
+  .product-item--out-of-stock .product-card {
+    position: relative;
+  }
+
+  .product-item--out-of-stock .product-card:after {
+    content: "Out of Stock";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    color: red;
+    font-weight: bold;
+  }
+{%- endstyle -%}
+
+<div class="section-{{ section.id }}-padding">
+  {%- paginate collection.products by section.settings.products_per_page -%}
+    <div class="{% if section.settings.filter_type == 'vertical' %} facets-vertical page-width{% endif %}">
+      {{ 'component-facets.css' | asset_url | stylesheet_tag }}
+      <script src="{{ 'facets.js' | asset_url }}" defer="defer"></script>
+      {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
+        {% assign available_products_count = 0 %}
+
+        {% if collection.products_count > 0 %}
+          {% for product in collection.products %}
+            {% if product.available %}
+              {% assign available_products_count = available_products_count | plus: 1 %}
+            {% endif %}
+          {% endfor %}
+
+          {% if available_products_count > 0 %}
+            {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
+              <aside
+                aria-labelledby="verticalTitle"
+                class="facets-wrapper{% unless section.settings.enable_filtering %} facets-wrapper--no-filters{% endunless %}{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}"
+                id="main-collection-filters"
+                data-id="{{ section.id }}"
+              >
+                {% render 'facetsalt',
+                  results: collection,
+                  enable_filtering: section.settings.enable_filtering,
+                  enable_sorting: section.settings.enable_sorting,
+                  filter_type: section.settings.filter_type,
+                  paginate: paginate
+                %}
+              </aside>
+            {% endif %}
+
+          {% endif %}
+        {% endif %}
+      {%- endif -%}
+
+      <div
+        class="product-grid-container{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+        id="ProductGridContainer"
+        {% if settings.animations_reveal_on_scroll %}
+          data-cascade
+        {% endif %}
+      >
+        {%- if collection.products.size == 0 -%}
+          <div class="collection collection--empty page-width" id="product-grid" data-id="{{ section.id }}">
+            <div class="loading-overlay gradient"></div>
+            <div class="title-wrapper center">
+              <h2 class="title title--primary">
+                {{ 'sections.collection_template.empty' | t }}
+                {% comment %}
+                  <br>
+                  {{
+                    'sections.collection_template.use_fewer_filters_html'
+                    | t: link: collection.url, class: 'underlined-link link'
+                  }}
+                {% endcomment %}
+              </h2>
+            </div>
+          </div>
+        {%- else -%}
+          <div class="collection{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}">
+            <div class="loading-overlay gradient"></div>
+            <ul
+              id="product-grid"
+              data-id="{{ section.id }}"
+              class="grid product-grid grid--{{ section.settings.columns_mobile }}-col-tablet-down grid--{{ section.settings.columns_desktop }}-col-desktop"
+            >
+{%- for product in collection.products -%}
+  {% assign lazy_load = false %}
+  {%- if forloop.index > 2 -%}
+    {%- assign lazy_load = true -%}
+  {%- endif -%}
+  {% assign product_colors = product.metafields.custom.product_color_name.value %}
+  
+  <li
+    class="grid__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}{% unless product.available %} product-item--out-of-stock{% endunless %}"
+    {% if settings.animations_reveal_on_scroll %}
+      data-cascade style="--animation-order: {{ forloop.index }};"
+    {% endif %}
+    data-colors="{{ product_colors | escape }}"
+  >
+{% if product.tags contains 'buy 2 get 1 free' %}
+  {% render 'card-product-offer-badge',
+    card_product: product,
+    media_aspect_ratio: section.settings.image_ratio,
+    image_shape: section.settings.image_shape,
+    show_secondary_image: section.settings.show_secondary_image,
+    show_vendor: section.settings.show_vendor,
+    show_rating: section.settings.show_rating,
+    lazy_load: lazy_load,
+    show_quick_add: section.settings.enable_quick_add,
+    section_id: section.id %}
+  
+{% elsif product.tags contains 'Bodyx Freebie Offer' %}
+  {% render 'card-product-offer-badge-freebie',
+    card_product: product,
+    media_aspect_ratio: section.settings.image_ratio,
+    image_shape: section.settings.image_shape,
+    show_secondary_image: section.settings.show_secondary_image,
+    show_vendor: section.settings.show_vendor,
+    show_rating: section.settings.show_rating,
+    lazy_load: lazy_load,
+    show_quick_add: section.settings.enable_quick_add,
+    section_id: section.id %}
+
+  
+  
+{% else %}
+  {% render 'card-pro-b1gone',
+    card_product: product,
+    media_aspect_ratio: section.settings.image_ratio,
+    image_shape: section.settings.image_shape,
+    show_secondary_image: section.settings.show_secondary_image,
+    show_vendor: section.settings.show_vendor,
+    show_rating: section.settings.show_rating,
+    lazy_load: lazy_load,
+    show_quick_add: section.settings.enable_quick_add,
+    section_id: section.id %}
+  
+{% endif %}
+
+    
+    {% unless product.available %}
+      <div class="product-card__overlay" style="display: none;">Out of Stock</div>
+    {% endunless %}
+  </li>
+{%- endfor -%}
+</ul>
+
+            {%- if paginate.pages > 1 -%}
+              {% render 'pagination', paginate: paginate, anchor: '' %}
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+
+      
+    </div>
+  {%- endpaginate -%}
+  {% if section.settings.image_shape == 'arch' %}
+    {% render 'mask-arch' %}
+  {%- endif -%}
+</div>
+
+<!-- Add JavaScript for Filtering -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var selectedFilters = new Set();
+
+    function updateFilters() {
+      var products = document.querySelectorAll('.grid__item');
+
+      products.forEach(function(product) {
+        var productColors = product.getAttribute('data-colors');
+        if (productColors) {
+          productColors = productColors.split(',');
+        } else {
+          productColors = [];
+        }
+
+        var showProduct = Array.from(selectedFilters).some(function(color) {
+          return productColors.includes(color);
+        });
+
+        if (selectedFilters.size === 0 || showProduct) {
+          product.style.display = 'block';
+        } else {
+          product.style.display = 'none';
+        }
+      });
+    }
+
+    document.querySelectorAll('.color-filter-button').forEach(function(button) {
+      button.addEventListener('click', function() {
+        var selectedColor = this.getAttribute('data-color');
+
+        if (selectedColor === 'all') {
+          selectedFilters.clear();
+          document.querySelectorAll('.color-filter-button').forEach(function(btn) {
+            btn.classList.remove('active');
+          });
+          this.classList.add('active');
+        } else {
+          if (selectedFilters.has(selectedColor)) {
+            selectedFilters.delete(selectedColor);
+            this.classList.remove('active');
+          } else {
+            selectedFilters.add(selectedColor);
+            this.classList.add('active');
+          }
+          document.querySelector('.color-filter-button[data-color="all"]').classList.remove('active');
+        }
+
+        updateFilters();
+      });
+    });
+
+    document.querySelectorAll('.remove-filter').forEach(function(removeButton) {
+      removeButton.addEventListener('click', function(event) {
+        event.stopPropagation();
+        var button = this.parentElement;
+        var color = button.getAttribute('data-color');
+        selectedFilters.delete(color);
+        button.classList.remove('active');
+        updateFilters();
+      });
+    });
+  });
+</script>
+<!-- section 2 -->
+{% schema %}
+{
+  "name": "b1g1 Free Products",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "title_image",
+      "label": "Title Image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+     {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+     {
+      "type": "select",
+      "id": "subheading_alignment",
+      "label": "Subheading Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Progress Bar Settings"
+    },
+    {
+      "type": "text",
+      "id": "step_1_label",
+      "label": "Step 1 Label",
+      "default": "STEP 1"
+    },
+    {
+      "type": "text",
+      "id": "step_1_description",
+      "label": "Step 1 Description"
+    },
+    {
+      "type": "url",
+      "id": "step_1_link",
+      "label": "Step 1 Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "step_1_active",
+      "label": "Mark Step 1 as Active",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "step_2_link",
+      "label": "Step 2 Link"
+    },
+     {
+      "type": "header",
+      "content": "Custom Heading Styles"
+    },
+    {
+      "type": "number",
+      "id": "heading_font_size",
+      "label": "Heading Font Size (rem)",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#000000"
+    },
+    {
+      "type": "select",
+      "id": "heading_text_transform",
+      "label": "Heading Text Transform",
+      "default": "uppercase",
+      "options": [
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "lowercase",
+          "label": "Lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ]
+    },
+    {
+      "type": "number",
+      "id": "heading_font_weight",
+      "label": "Heading Font Weight",
+      "default": 700
+    },
+    {
+      "type": "number",
+      "id": "heading_line_height",
+      "label": "Heading Line Height (rem)",
+      "default": 3
+    }
+  ],
+  "presets": [
+    {
+      "name": "b1g1 Free Products",
+      "category": "Promotion"
+    }
+  ]
+}
+{% endschema %}

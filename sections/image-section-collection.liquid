@@ -1,0 +1,52 @@
+{% comment %}
+  This is a Shopify section for displaying an image.
+{% endcomment %}
+<style>
+.pad-lr-0-mobile{
+display:none;
+}
+@media (max-width: 749px) {
+.pad-lr-0-desk{
+display:none;
+}
+
+
+.pad-lr-0-mobile{
+display:block;
+}
+
+}
+</style>
+<section id="scrbn" class="">
+  <div class="container-fluid pad-lr-0">
+    <a href="{{ section.settings.button_link_one }}"><img src="{{ section.settings.image | img_url: 'master' }}" width="100%" class="shadow pad-lr-0-desk" alt="Section Image"><img src="{{ section.settings.mobile_image | img_url: 'master' }}" width="100%" class="shadow pad-lr-0-mobile" alt="Section Image"></a>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Full Width Image 2",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Upload Image"
+    },
+        {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Upload Mobile Image"
+    },
+        {
+      "type": "url",
+      "id": "button_link_one",
+      "label": "Button Link URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Full Width Image 2",
+      "category": "Images"
+    }
+  ]
+}
+{% endschema %}

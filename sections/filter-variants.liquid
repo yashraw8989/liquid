@@ -1,0 +1,30 @@
+<div class="filter-by-variant">
+  <h4>{{ section.settings.variant_title }}</h4>
+  <ul>
+    {% assign color_variants = '' %}
+    {% for product in collections.all.products %}
+      {% for option in product.options %}
+        {% if option == 'Color' or option == 'Colour' %}
+          {% assign index = forloop.index0 %}
+          {% assign colorlist = '' %}
+          {% assign color = '' %}
+          {% for variant in product.variants %}
+            {% capture color %}
+              {{ variant.options[index] }}
+            {% endcapture %}
+            {% unless colorlist contains color %}
+              <li>
+                <input type="checkbox" id="variant-{{ variant.id }}" name="variant" value="{{ color }}">
+                <label for="variant-{{ variant.id }}">{{ color }}</label>
+              </li>
+              {% capture tempList %}
+                {{ colorlist | append: color | append: ' ' }}
+              {% endcapture %}
+              {% assign colorlist = tempList %}
+            {% endunless %}
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  </ul>
+</div>

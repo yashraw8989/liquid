@@ -1,0 +1,22 @@
+{%- assign wk_cashback_amount = product.metafields.wk_wallet_management.product_cashback -%}
+{%- assign wk_cashback_label = shop.metafields.wk_wallet_management.cashback_widget_label -%}
+{%- assign wk_wallet_label = shop.metafields.wk_wallet_management.header_label -%}
+{%- assign wk_wallet_balance = customer.metafields.wk_wallet_management.wallet_balance -%}
+{%- assign wk_shop_currency = customer.metafields.wk_wallet_management.wk_shop_currency -%}
+{%- assign wk_wallet_remaning_amount = customer.metafields.wk_wallet_management.wallet_remaning_amount -%}
+{%- assign wk_shop_domain = shop.domain -%}
+<script>
+    if ((typeof jQuery === 'undefined') || (parseFloat(jQuery.fn.jquery) < 1.7)) {
+        jqueryScript = document.createElement('script');
+        jqueryScript.src = 'https://code.jquery.com/jquery-3.6.0.min.js';
+        document.head.append(jqueryScript);
+    }
+  
+    var wk_cashback_amount  = '{{ wk_cashback_amount }}';
+    var wk_cashback_label   = '{{ wk_cashback_label }}';
+    var wk_wallet_label     = '{{ wk_wallet_label }}';
+    var wk_wallet_balance   = '{{ wk_wallet_balance }}';
+    var wk_shop_currency    = '{{ wk_shop_currency }}';
+    var wallet_remaning_amount = '{{ wk_wallet_remaning_amount }}';
+    var wk_shop_domain      =   '{{ wk_shop_domain }}';
+</script>

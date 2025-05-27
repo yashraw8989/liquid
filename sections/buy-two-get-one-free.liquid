@@ -1,0 +1,178 @@
+<style>
+  .flex-dis-dyn h2 {
+    font-size: {{ section.settings.heading_font_size | default: '7' }}rem;
+    text-transform: {{ section.settings.heading_text_transform | default: 'uppercase' }};
+    color: {{ section.settings.heading_color | default: '#ff0018' }};
+    font-weight: {{ section.settings.heading_font_weight | default: '800' }};
+    line-height: {{ section.settings.heading_line_height | default: '7' }}rem;
+  }
+      .dyn-btn-two {
+    font-size: {{ section.settings.button_font_size | default: '22' }}px;
+    font-style: normal;
+    font-weight: {{ section.settings.button_font_weight | default: '600' }};
+    background-color: {{ section.settings.button_bg_color }};
+    color: {{ section.settings.button_text_color }};
+  }
+    .dyn-btn-two:hover {
+    color: {{ section.settings.button_hover_text_color }};
+  }
+.dyn-btn-two::before {
+    background: {{ section.settings.button_hover_color }};
+}
+</style>
+<style>
+.doc-second-img-mobile{
+display:none;
+}
+@media (max-width: 749px) {
+.doc-second-img-desk{
+display:none;
+}
+
+
+.doc-second-img-mobile{
+display:block;
+}
+
+}
+</style>
+
+{% comment %}
+  This is a Shopify section for displaying a text block and an image.
+{% endcomment %}
+
+<section class="transmore">
+  <div class="container-fluid pd-0">
+    <div class="row">
+      <div class="col-lg-3 col-xl-2 offset-lg-1 flex-dis flex-dis-dyn">
+        <div class="text-doc">
+          <h2>{{ section.settings.heading }}</h2>
+          <div class="cta__content-4 text-anim text-center mt-20">
+            <a rel="noreferrer" href="{{ section.settings.button_link }}" target="_blank" class="nionx-btn nionx-btn--base shop_btn dyn-btn-two"><span>{{ section.settings.button_text }}</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8 col-xl-9">
+        <div class="doc-second-img">
+          <img src="{{ section.settings.image | img_url: 'master' }}" width="100%" class="doc-second-img-desk" alt="Section Image">
+          <img src="{{ section.settings.mobile_image | img_url: 'master' }}" width="100%" class="doc-second-img-mobile" alt="Section Image">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Buy 2 get 1 free",
+  "settings": [
+        {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Upload Image"
+    },
+            {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Upload Mobile Image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Buy 2 get 1 free"
+    },
+    {
+      "type": "number",
+      "id": "heading_font_size",
+      "label": "Heading Font Size (rem)",
+      "default": 7
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#ff0018"
+    },
+        {
+      "type": "select",
+      "id": "heading_text_transform",
+      "label": "Text Transform",
+      "default": "uppercase",
+      "options": [
+        { "value": "uppercase", "label": "Uppercase" },
+        { "value": "lowercase", "label": "Lowercase" },
+        { "value": "capitalize", "label": "Capitalize" },
+        { "value": "none", "label": "None" }
+      ]
+    },
+    {
+      "type": "number",
+      "id": "heading_font_weight",
+      "label": "Heading Font Weight",
+      "default": 800
+    },
+    {
+      "type": "number",
+      "id": "heading_line_height",
+      "label": "Heading Line Height (rem)",
+      "default": 7
+    },
+
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop now"
+    },
+        {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+
+            {
+      "type": "number",
+      "id": "button_font_size",
+      "label": "Button Font Size (px)",
+      "default": 22
+    },
+    {
+      "type": "number",
+      "id": "button_font_weight",
+      "label": "Button Font Weight",
+      "default": 600
+    },
+        {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button Background Color",
+      "default": "#FE0008"
+    },
+        {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#FFFFFF"
+    },
+        {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Button Hover Text Color",
+      "default": "#fe0008"
+    },
+        {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button Hover Color",
+      "default": "#9be2f2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Buy 2 get 1 free",
+      "category": "Text and image"
+    }
+  ]
+}
+{% endschema %}

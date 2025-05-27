@@ -1,0 +1,637 @@
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  let activeModal = null; // Track the currently active modal
+
+  // Detect B1G1 page once
+  const isB1G1Page = window.location.pathname.includes('/pages/buy-1-get-1') || window.location.pathname.includes('/pages/buy-1-get-1-free');
+
+  function closeOpenModal() {
+    if (activeModal) {
+      activeModal.classList.remove('slide-up'); 
+      activeModal.classList.add('hide'); 
+      activeModal.style.display = 'none'; 
+      activeModal = null;
+    }
+  }
+
+  function showSizeSelection(productId, productHandle) {
+    if (isB1G1Page) {
+      // Skip modal completely on B1G1 page
+      console.log('B1G1 page detected — skipping size modal');
+      // Optionally add product directly if single variant:
+      addToCart(productId);
+      return;
+    }
+
+    if (activeModal) {
+      closeOpenModal();
+    }
+
+    const sizeModal = document.getElementById('realtime-size-' + productId);
+
+    if (!sizeModal) {
+      console.error('Modal not found for product ID:', productId);
+      return;
+    }
+
+    fetch(`${productHandle}.js`)
+      .then(response => {
+        if (!response.ok) throw new Error('Product not found');
+        return response.json();
+      })
+      .then(product => {
+        const sizeList = document.getElementById('size-list-' + productId);
+        sizeList.innerHTML = '';
+
+        product.variants.forEach(variant => {
+          const sizeItem = document.createElement('li');
+          if (variant.available) {
+            sizeItem.innerHTML = `<a data-variant-id="${variant.id}" class="in-stock">${variant.title}</a>`;
+          } else {
+            sizeItem.innerHTML = `<span class="out-of-stock">${variant.title}</span>`;
+          }
+          sizeList.appendChild(sizeItem);
+        });
+
+        sizeModal.style.display = 'block';
+        sizeModal.classList.remove('hide');
+        sizeModal.classList.add('slide-up');
+
+        activeModal = sizeModal;
+      })
+      .catch(error => {
+        console.error('Error fetching product:', error);
+      });
+  }
+
+  function addToCart(variantId) {
+    return fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: variantId, quantity: 1 }),
+    })
+    .then(response => response.json())
+    .then(cart => {
+      console.log('Product added to cart:', cart);
+      // Redirect to cart or show notification if needed
+      window.location.href = '/cart';
+    })
+    .catch(error => {
+      console.error('Error adding to cart:', error);
+    });
+  }
+
+  function attachEventListeners() {
+    document.querySelectorAll('.add-to-cart-button').forEach(button => {
+      if (!button.classList.contains('listener-added')) {
+        button.classList.add('listener-added');
+        button.addEventListener('click', function (event) {
+          event.preventDefault();
+          const productId = this.getAttribute('data-product-id');
+          const productHandle = this.getAttribute('data-product-handle');
+          showSizeSelection(productId, productHandle);
+        });
+      }
+    });
+  }
+
+  document.addEventListener('click', function (event) {
+    if (event.target.matches('.close-modal')) {
+      closeOpenModal();
+    }
+
+    if (event.target.closest('.P2-sizes a')) {
+      const selectedVariantId = event.target.getAttribute('data-variant-id');
+      addToCart(selectedVariantId).then(() => closeOpenModal());
+    }
+  });
+
+  const observer = new MutationObserver(() => attachEventListeners());
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  attachEventListeners();
+});
+</script>
+{% comment %}
+  Renders a list of product's price (regular, sale)
+
+  Accepts:
+  - product: {Object} Product Liquid object (optional)
+  - use_variant: {Boolean} Renders selected or first variant price instead of overall product pricing (optional)
+  - show_badges: {Boolean} Renders 'Sale' and 'Sold Out' tags if the product matches the condition (optional)
+  - price_class: {String} Adds a price class to the price element (optional)
+  - show_compare_at_price: {Boolean} Renders the compare at price if the product matches the condition (optional)
+
+  Usage:
+  {% render 'price', product: product %}
+{% endcomment %}
+{%- liquid
+  if use_variant
+    assign target = product.selected_or_first_available_variant
+  else
+    assign target = product
+  endif
+
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price | default: 1999
+  assign price_min = product.price_min
+  assign price_max = product.price_max
+  assign available = target.available | default: false
+  assign money_price = price | money
+  assign money_price_min = price_min | money
+  assign money_price_max = price_max | money
+  if settings.currency_code_enabled
+    assign money_price = price | money_with_currency
+    assign money_price_min = price_min | money_with_currency
+    assign money_price_max = price_max | money_with_currency
+  endif
+-%}
+
+<div
+  class="
+    price
+    {%- if price_class %} {{ price_class }}{% endif -%}
+    {%- if available == false %} price--sold-out{% endif -%}
+    {%- if compare_at_price > price and product.quantity_price_breaks_configured? != true %} price--on-sale{% endif -%}
+    {%- if compare_at_price > price and product.quantity_price_breaks_configured? %} volume-pricing--sale-badge{% endif -%}
+    {%- if product.price_varies == false and product.compare_at_price_varies %} price--no-compare{% endif -%}
+    {%- if show_badges %} price--show-badge{% endif -%}
+  "
+>
+  <div class="price__container">
+    {%- comment -%}
+      Explanation of description list:
+        - div.price__regular: Displayed when there are no variants on sale
+        - div.price__sale: Displayed when a variant is a sale
+    {%- endcomment -%}
+    <div class="price__regular">
+      {%- if product.quantity_price_breaks_configured? -%}
+        {%- if show_compare_at_price and compare_at_price -%}
+          {%- unless product.price_varies == false and product.compare_at_price_varies %}
+            <span class="visually-hidden visually-hidden--inline">
+              {{- 'products.product.price.regular_price' | t -}}
+            </span>
+            <span>
+              <s class="price-item price-item--regular variant-item__old-price">
+                {% if settings.currency_code_enabled %}
+                  {{ compare_at_price | money_with_currency }}
+                {% else %}
+                  {{ compare_at_price | money }}
+                {% endif %}
+              </s>
+            </span>
+          {%- endunless -%}
+        {%- endif -%}
+        <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
+        <span class="price-item price-item--regular">
+          {{- 'products.product.volume_pricing.price_range' | t: minimum: money_price_min, maximum: money_price_max -}}
+        </span>
+      {%- else -%}
+        <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
+        <span class="price-item price-item--regular"> {{ money_price }} </span>
+      {%- endif -%}
+    </div>
+    <div class="price__sale">
+      {%- unless product.price_varies == false and product.compare_at_price_varies %}
+        <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
+        <span>
+          <s class="price-item price-item--regular">
+            {% if settings.currency_code_enabled %}
+              {{ compare_at_price | money_with_currency }}
+            {% else %}
+              {{ compare_at_price | money }}
+            {% endif %}
+          </s>
+        </span>
+      {%- endunless -%}
+      <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.sale_price' | t }}</span>
+      <span class="price-item price-item--sale price-item--last"> {{ money_price }} </span>
+    </div>
+
+    <small class="unit-price caption{% if product.selected_or_first_available_variant.unit_price_measurement == nil %} hidden{% endif %}">
+      <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
+      <span class="price-item price-item--last">
+        <span>{{- product.selected_or_first_available_variant.unit_price | money -}}</span>
+        <span aria-hidden="true">/</span>
+        <span class="visually-hidden">&nbsp;{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
+        <span>
+          {%- if product.selected_or_first_available_variant.unit_price_measurement.reference_value != 1 -%}
+            {{- product.selected_or_first_available_variant.unit_price_measurement.reference_value -}}
+          {%- endif -%}
+          {{ product.selected_or_first_available_variant.unit_price_measurement.reference_unit }}
+        </span>
+      </span>
+    </small>
+  </div>
+
+  {%- if show_badges -%}
+    {%- assign difference = product.selected_or_first_available_variant.compare_at_price
+      | minus: product.selected_or_first_available_variant.price
+    -%}
+    {%- assign float_difference = difference | times: 1.0 -%}
+    {%- assign discount_fraction = float_difference
+      | divided_by: product.selected_or_first_available_variant.compare_at_price
+    -%}
+    {%- assign discount_percentage = discount_fraction | times: 100 | round -%}
+
+    <span class="badge price__badge-sale color-{{ settings.sale_badge_color_scheme }}">
+      {{- discount_percentage }}% OFF
+
+      {% comment %} {{ 'products.product.on_sale' | t }} {% endcomment %}
+    </span>
+
+    <div class="product__tax caption rte">
+      {%- if cart.taxes_included -%}
+        {{ 'products.product.include_taxes' | t }}
+      {%- endif -%}
+    </div>
+
+    <span class="badge price__badge-sold-out color-{{ settings.sold_out_badge_color_scheme }}">
+      {{ 'products.product.sold_out' | t }}
+    </span>
+  {%- endif -%}
+
+   {% if product.available %}
+  
+      <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+
+<!-- Add to Cart Button -->
+<button class="add-to-cart-button nionx-btn nionx-btn--base product-form__submit button button--full-width button--secondary Buttonstyle__BaseButton-sc-uenrm8-0 dQWvvo button--primary" data-product-id="{{ product.variants.first.id}}" data-product-handle="{{ product.url | split: '?' | first }}">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M7.5 7.67001V6.70001C7.5 4.45001 9.31 2.24001 11.56 2.03001C14.24 1.77001 16.5 3.88001 16.5 6.51001V7.89001" stroke="white" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M8.99983 22H14.9998C19.0198 22 19.7398 20.39 19.9498 18.43L20.6998 12.43C20.9698 9.99 20.2698 8 15.9998 8H7.99983C3.72983 8 3.02983 9.99 3.29983 12.43L4.04983 18.43C4.25983 20.39 4.97983 22 8.99983 22Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M15.4955 12H15.5045" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M8.49451 12H8.50349" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+</button>
+
+
+  {% else %}
+    <button type="button" class="cart-button none collection" disabled>Sold Out</button>
+  {% endif %}
+</div>
+
+
+<!-- Size Selection Modal -->
+<article class="selectSize slideUpSizes selectSizeToggle" id="realtime-size-{{ product.variants.first.id }}" style="display: none;">
+  <p>Select a size
+    <button type="button" class="close buyClose closeBuy close-modal" id="closeBuy-realtime-size">×</button>
+  </p>
+  <div>
+    <ul class="P2-sizes" id="size-list-{{ product.variants.first.id }}">
+      <!-- Sizes will be dynamically populated here -->
+    </ul>
+  </div>
+</article>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  let activeModal = null; // Track the currently active modal
+
+  // Function to close any open modal instantly
+  function closeOpenModal() {
+    if (activeModal) {
+      activeModal.classList.remove('slide-up'); // Remove animation class
+      activeModal.classList.add('hide'); // Add hide class
+      activeModal.style.display = 'none'; // Instantly hide
+      activeModal = null; // Reset active modal
+    }
+  }
+
+  // Function to show the size selection modal for a product
+  function showSizeSelection(productId, productHandle) {
+    if (activeModal) {
+      closeOpenModal(); // Close any open modal before showing a new one
+    }
+
+
+
+     // console.log(productId);
+ //  const articles = document.querySelectorAll('.selectSize');
+
+ //    // Loop through each article and update the id
+ //    articles.forEach(article => {
+ //        if (productId) {
+ //            article.id = 'realtime-size-' + productId; // Update the article ID with the variant ID
+ //        }
+ //    });
+   
+
+    const sizeModal = document.getElementById('realtime-size-' + productId);
+
+    if (!sizeModal) {
+      console.error('Modal not found for product ID:', productId);
+      return;
+    }
+
+    const productUrl = productHandle.endsWith('.js') ? productHandle : `${productHandle}.js`;
+
+    console.log(`Fetching product data for handle: ${productHandle}`);
+
+    fetch(productUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Product not found');
+        }
+        return response.json();
+      })
+      .then((product) => {
+        console.log('Product data fetched successfully:', product);
+
+        const sizeList = document.getElementById('size-list-' + productId);
+        sizeList.innerHTML = ''; // Clear previous variants
+
+        product.variants.forEach((variant) => {
+          const sizeItem = document.createElement('li');
+          if (variant.available) {
+            sizeItem.innerHTML = `<a data-variant-id="${variant.id}" class="in-stock">${variant.title}</a>`;
+          } else {
+            sizeItem.innerHTML = `<span class="out-of-stock">${variant.title}</span>`;
+          }
+          sizeList.appendChild(sizeItem);
+        });
+
+        // Show the new modal
+        sizeModal.style.display = 'block';
+        sizeModal.classList.remove('hide'); // Ensure 'hide' class is removed
+        sizeModal.classList.add('slide-up'); // Add animation class
+
+        activeModal = sizeModal; // Set the new modal as active
+        console.log('Size modal displayed:', sizeModal.id);
+      })
+      .catch((error) => {
+        console.error('Error fetching product:', error);
+      });
+  }
+
+  // Attach click event to Add to Cart buttons
+  function attachEventListeners() {
+    document.querySelectorAll('.add-to-cart-button').forEach((button) => {
+      if (!button.classList.contains('listener-added')) {
+        button.classList.add('listener-added'); // Prevent duplicate event listeners
+
+        button.addEventListener('click', function (event) {
+          event.preventDefault();
+          const productId = this.getAttribute('data-product-id');
+          const productHandle = this.getAttribute('data-product-handle');
+
+          console.log(`Add to Cart button clicked. Product ID: ${productId} Handle: ${productHandle}`);
+
+          showSizeSelection(productId, productHandle);
+        });
+      }
+    });
+  }
+
+  // Handle click on modal close buttons
+  document.addEventListener('click', function (event) {
+    if (event.target.matches('.close-modal')) {
+      console.log('Close button clicked');
+      closeOpenModal();
+    }
+  });
+
+  // Reapply event listeners on DOM changes using MutationObserver
+  const observer = new MutationObserver(() => {
+    attachEventListeners(); // Reattach event listeners when DOM changes
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true, // Monitor changes in the whole subtree
+  });
+
+  // Handle size selection and add to cart
+  document.addEventListener('click', function (event) {
+    if (event.target.closest('.P2-sizes a')) {
+      const selectedVariantId = event.target.getAttribute('data-variant-id');
+      const modal = event.target.closest('.selectSize');
+
+      // Add product to cart with the selected variant
+      addToCart(selectedVariantId).then(() => {
+        // Close the modal after adding to cart
+        closeOpenModal();
+
+        // Show notification
+        showNotification('Product added to cart');
+      });
+    }
+  });
+
+  // Function to add product to the cart with selected variant
+  function addToCart(variantId) {
+    return fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: variantId,
+        quantity: 1,
+      }),
+    })
+      .then((response) => response.json())
+      .then((cart) => {
+        console.log('Product added to cart:', cart);
+      })
+      .catch((error) => {
+        console.error('Error adding product to cart:', error);
+      });
+  }
+
+  // Function to show notification
+  function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+      notification.classList.add('show');
+      setTimeout(() => {
+        notification.classList.remove('show');
+        notification.addEventListener(
+          'transitionend',
+          () => {
+            notification.remove();
+          },
+          { once: true }
+        );
+      }, 1000);
+    }, 10);
+  }
+
+
+  // Initial event listener attachment
+  attachEventListeners();
+});
+  
+</script>
+
+ <style>
+.P2-sizes span.out-of-stock {
+  color: #7c7171 !important; cursor: default !important; background: linear-gradient(to top left, #eff1f4 calc(50% - 1px), #c1bcbc, #eff1f4 calc(50% + 1px));
+}
+
+  
+.add-to-cart-form {display:none;}
+/* CSS for sliding down the modal */
+.selectSize.slide-down {
+  transform: translateY(0);
+  transition: transform 0.3s ease-out;
+}
+
+/* CSS for hiding the modal */
+.selectSize.hide {
+  transform: translateY(100%);
+}
+
+/* Notification styling */
+.notification {
+  display: none;
+  position: fixed;
+  top: 10%;
+  left: 50%;
+    transform: translateX(-50%);
+      background-color: #121212;
+    color: white;
+    padding: 5px 8px;
+    border-radius: 5px;
+    z-index: 1100;
+    font-weight: normal;
+    text-transform: capitalize;
+}
+
+.notification.show {
+  display: block;
+}
+
+  
+  /* CSS for sliding up the modal */
+.selectSize.slide-up {
+  transform: translateY(0); /* Slide up when active */
+}
+
+.selectSize.hide {
+  transform: translateY(100%); /* Slide down when hidden */
+}
+
+/* Optional: Add styles for disabled state */
+.selectSize.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+  .selectSize {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  border-radius: 5px 5px 0 0;
+  display: none; /* Hide by default */
+  transform: translateY(100%); /* Off-screen initially */
+  transition: transform 0.3s ease-out;
+}
+
+.selectSize p {
+ margin: 0;
+    font-weight: 100 !important;
+    font-size: clamp(14px, calc(14*(100vw / 1440)), 16px);
+    color: #000;
+    margin-bottom: 13px !important;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 7px;
+}
+
+.P2-sizes {
+  list-style: none;
+  padding: 0;
+}
+
+.P2-sizes li {
+ width: auto;
+    border: none;
+    margin: 0;
+    display: inline-block;
+}
+
+.P2-sizes a, .P2-sizes span.out-of-stock {
+      color: #656565;
+    padding: 5px 4px;
+    border: 1px solid #ccc;
+    font-size: 12px;
+    margin: 3px;
+    cursor: pointer;
+    display: inline-block;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -ms-border-radius: 8px;
+    -o-border-radius: 8px;
+    border-radius: 8px;
+    min-width: 21px;
+    font-family: poppinsRegular, Arial, sans-serif;
+    text-align: center;
+  font-weight:normal !important;
+}
+
+.P2-sizes a:hover {
+  background-color: #f8f8f8;
+}
+
+.closeBuy {
+    float: right;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+.product-page button.add-to-cart-button {
+    display: none;
+}
+/* Responsive Styles for Mobile */
+@media (max-width: 768px) {
+
+  .P2-sizes a, .P2-sizes span.out-of-stock {
+        border-radius: 6px;
+  }
+  .selectSize {
+   position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%; /* Full width */
+    z-index: 9999; /* Ensure it stays above other elements */
+    background-color: #fff; /* Background color */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Shadow for better visibility */
+    padding: 7px; /* Space inside the box */
+    border-top: 1px solid #ccc; /* Optional border for separation */
+  }
+
+  .P2-sizes a,
+  .P2-sizes span.out-of-stock {
+    font-size: 10px; /* Smaller font for mobile */
+    padding: 3px 2px; /* Adjust padding for better fit */
+  }
+
+  .selectSize p {
+    font-size: 12px; /* Adjust font size for mobile */
+    padding-bottom: 5px; /* Less padding for compact view */
+  }
+}
+
+/* Optional: Disable Add-to-Cart Buttons for Mobile */
+@media (max-width: 768px) {
+  .add-to-cart-button {
+    display: none; /* Hide Add-to-Cart button on mobile */
+  }
+}
+@media only screen and (max-width: 567px) {
+.notification{   width: 60% !important;
+    text-align: center;
+             }
+}
+  
+</style>           
+            
