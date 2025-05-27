@@ -1,7 +1,43 @@
-{% comment %} No initial span#gift-icon or its script for modal creation, relying on the single static modal below {% endcomment %}
+<span id="gift-icon" style="display:none;">🎁</span>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const giftIcon = document.getElementById('gift-icon');
+    if (giftIcon && giftIcon.textContent.includes('🎁')) {
+      // The icon is present, so create/append the gift modal
+      const giftModalHTML = `
+        <div id="gift-selection-modal" class="gift-main-box" style="display:none;">
+  <div class="product-gift-popup">
+    
+    <h2 class="gift-title">Select Your Free Gift</h2>
+    <div class="product-gift">
+      <div class="pro1">
+        <div class="pro-gift-img1">
+          <img id="gift1-img" src="" alt="Gift 1 Image" width="100%">
+        </div>
+        <div class="gift-box-text">
+          <h3 id="gift1-name">Free Gift 1</h3>
+          <button id="gift1-btn" class="gift-btn">Add Gift 1 to Cart</button>
+        </div>
+      </div>
+      <div class="pro1">
+        <div class="pro-gift-img1">
+          <img id="gift2-img" src="" alt="Gift 2 Image" width="100%">
+        </div>
+        <div class="gift-box-text">
+          <h3 id="gift2-name">Free Gift 2</h3>
+          <button id="gift2-btn" class="gift-btn">Add Gift 2 to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', giftModalHTML);
+    }
+  });
+</script>
 
 <style>
-  /* Main Gift Modal Styles (Consolidated) */
   .gift-main-box {
     position: fixed;
     left: 0px;
@@ -10,58 +46,50 @@
     height: 100%;
     background: rgb(0 0 0 / 24%);
     display: none;
-    z-index: 9999; /* High z-index */
+    z-index: 9;
   }
 
-  .pro1 { /* Used within gift-main-box */
+  .pro1 {
     width: 260px;
     border: 1px solid #d9d9d9;
     border-radius: 10px;
     overflow: hidden;
     background: #f6f6f6;
-    flex: 1; /* For product-gift layout */
-    min-width: 250px; /* For product-gift layout */
-    text-align: center; /* For product-gift layout */
   }
 
-  .product-gift-popup { /* Used within gift-main-box */
-    position: absolute; 
+  .product-gift-popup {
+    position: absolute;
     left: 50%;
-    top: 50%; 
+    top: 46%;
     transform: translate(-50%, -50%);
-    width: fit-content;
+    width: 600px;
+    height: 530px;
     background: white;
     padding: 20px 30px;
     margin: auto;
-    height: fit-content !important;
-    min-height: fit-content;
-    border-radius: 12px; 
-    max-width: fit-content;
   }
 
-  .gift-box-text { /* Used within pro1 */
+  .gift-box-text {
     padding: 10px 20px;
-    margin-top: 15px; 
   }
 
-  .gift-btn { /* Used within gift-box-text */
+  .gift-btn {
     width: 100%;
     height: 40px;
-    border-radius: 10px; 
+    border-radius: 10px;
     border: 0px;
-    background: #4CAF50; 
+    background: green;
     color: white;
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
-    margin-top: 10px; 
   }
 
   .gift-btn:hover {
-    background-color: #45a049; 
+    background-color: #0e9a0eeb;
   }
 
-  .gift-box-text h3 { /* Used within gift-box-text */
+  .gift-box-text h3 {
     text-align: center;
     margin: 0px 0px 1.4rem 0px;
     font-size: 18px;
@@ -74,7 +102,7 @@
     -webkit-box-orient: vertical;
   }
 
-  .gift-title { /* Used within product-gift-popup */
+  .gift-title {
     text-align: center;
     font-size: 22px;
     border: 1px solid #8080800d;
@@ -82,28 +110,22 @@
     border-radius: 10px;
     background: #8080800a;
     margin: 0px 0px 1.5rem 0px;
-    margin-bottom: 20px; 
   }
 
-  .product-gift { /* Used within product-gift-popup */
+  .product-gift {
     display: flex;
-    justify-content: space-between; 
-    gap: 20px; 
-    flex-wrap: wrap; 
+    justify-content: space-between;
   }
 
-  .pro-gift-img1 { /* Used within pro1 */
+  .pro-gift-img1 {
     height: 350px;
   }
 
-  .pro-gift-img1 img { /* Used within pro-gift-img1 */
+  .pro-gift-img1 img {
     height: 100%;
-    width: 100%; 
-    object-fit: cover;
-    max-width: 100%; 
   }
 
-  .close-btn5 { /* This is the close button for the gift modal */
+  .close-btn5 {
     position: absolute;
     right: -14px;
     top: -12px;
@@ -115,108 +137,211 @@
     line-height: 30px;
     background: red;
     color: white;
-    cursor: pointer;
   }
 
-  /* B2G1 Progress Styles */
-  .b2g1-progress {
-    position: fixed;
-    bottom: 0px;
-    left: 0%;
-    width: 400px;
-    background: white;
-    padding: 20px;
-    border-radius: 0px 15px 0px 0px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 1000; 
-  }
-
-  .close-progress {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    font-size: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #666;
-  }
-  .close-progress:hover { color: #333; }
-  .progress-container { width: 100%; }
-  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .progress-header h3 { font-size: 18px; font-weight: 600; color: #1f2937; margin: 0; }
-  .item-count { font-size: 15px; color: #4b5563; font-weight: 500; }
-  .progress-bar-container { width: 100%; height: 20px; background: #e5e7eb; border-radius: 10px; overflow: hidden; }
-  .progress-bar { background-color:#177e37 !important; height: 100%; font-size: 12px; line-height: 20px; color: #fff; text-align: center; box-shadow: inset 0 -1px 0 rgba(0,0,0,0.15); transition: width 0.6s ease, background-color 0.6s ease; display: flex !important; align-items: center; justify-content: center; }
-  .progress-bar.complete { background-color: #10b981 !important; }
-  .progress-message { margin-top: 12px; font-size: 15px; text-align: center; font-weight: 500; }
-
-  /* Violation Popup Styles */
-  .cart-popup {
-    display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 10001; 
-    max-width: 400px;
-  }
-  .cart-popup p { margin-bottom: 20px; line-height: 1.5; color: #374151; }
-  .cart-popup button { background: #ef4444; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: background-color 0.3s; }
-  .cart-popup button:hover { background: #dc2626; }
-  .cart-popup .close-btn { position: absolute; top: 5px; right: 10px; cursor: pointer; }
-
-
-  /* Media Queries from original styles */
   @media(max-width:768px) {
     .product-gift-popup {
-        width: fit-content;
+      width: 520px;
+      height: 450px;
     }
-    .pro1 { /* For gift modal */
-      width: 250px; 
-    }
-    .gift-btn { font-size: 12px; }
-    .gift-title { font-size: 23px; }
 
-    /* B2G1 progress responsive */
-    .item-count{ width:90px; }
-    .progress-header { align-items: baseline; }
-    .b2g1-progress {
-      bottom: 0px; 
-      left: 50%;
-      border-radius: 12px 12px 0 0 !important; 
-      transform: translateX(-50%);
-      width: 95%!important; 
-      padding: 15px;
+    .pro1 {
+      width: 250px;
     }
-    .product-gift { /* For gift modal items */
-       flex-wrap: nowrap !important; 
-       gap: 10px !important; 
+
+    .product-gift-popup {
+      height: auto;
+    }
+
+    .gift-btn {
+      font-size: 12px;
+    }
+
+    .gift-title {
+      font-size: 23px;
     }
   }
 
   @media(max-width:500px) {
     .product-gift-popup {
-        width: fit-content;
-      padding: 20px 16px !important; 
+      width: 91% !important;
     }
-    .gift-box-text { padding: 10px 8px; }
-    .gift-box-text h3 { font-size: 14px !important; }
-    .pro-gift-img1 { height: 200px; } 
 
-    .pro1 { /* For gift modal items */
-        width: 48%; 
-        min-width: auto !important;
-        margin-bottom: 10px; 
+    .gift-box-text {
+      padding: 10px 8px;
     }
-    .product-gift { /* For gift modal items */
-        flex-wrap: wrap !important; 
+
+    .gift-box-text h3 {
+      font-size: 14px !important;
     }
-     .b2g1-progress {
-        padding: 10px;
+
+    .pro-gift-img1 {
+      height: 250px;
     }
-    .progress-header h3 { font-size: 16px;}
-    .item-count { font-size: 14px; }
-    .progress-message { font-size: 14px; }
   }
 </style>
 
+<div id="gift-selection-modal" class="gift-main-box" style="display:none;">
+  <div class="product-gift-popup">
+    <div class="close-btn5">X</div>
+    <h2 class="gift-title">Select Your Free Gift</h2>
+    <div class="product-gift">
+      <div class="pro1">
+        <div class="pro-gift-img1">
+          <img id="gift1-img" src="" alt="Gift 1 Image" width="100%">
+        </div>
+        <div class="gift-box-text">
+          <h3 id="gift1-name">Free Gift 1</h3>
+          <button id="gift1-btn" class="gift-btn">Add Gift 1 to Cart</button>
+        </div>
+      </div>
+      <div class="pro1">
+        <div class="pro-gift-img1">
+          <img id="gift2-img" src="" alt="Gift 2 Image" width="100%">
+        </div>
+        <div class="gift-box-text">
+          <h3 id="gift2-name">Free Gift 2</h3>
+          <button id="gift2-btn" class="gift-btn">Add Gift 2 to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const freeGiftProductUrls = [
+    '/products/bodyx-unisex-deodorant-xtacy-deo-150ml',
+    '/products/bodyx-unisex-deodorant-xpression-deo-150ml'
+  ];
+
+  // Function to add the selected freebie to the cart
+  function addSelectedGiftToCart(variantId) {
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        items: [
+          {
+            id: variantId, // The variant ID of the selected freebie
+            quantity: 1 // Add 1 quantity of the freebie
+          }
+        ]
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Free gift added successfully:', data);
+        location.reload(); // Reload to reflect changes
+      })
+      .catch(error => console.error('Error adding free gift:', error));
+  }
+
+  // Function to fetch product data and update the modal with the gift options
+  function fetchProductDataAndUpdateModal(productUrl, imgId, nameId, buttonId) {
+    fetch(`${productUrl}.json`)
+      .then(response => response.json())
+      .then(productData => {
+        const product = productData.product;
+        const productImg = product.images[0].src;
+        const productName = product.title;
+        const variantId = product.variants[0].id; // Assuming first variant
+
+        // Update the modal content
+        document.getElementById(imgId).src = productImg;
+        document.getElementById(nameId).innerText = productName;
+
+        // Set button action to add gift to cart
+        document.getElementById(buttonId).onclick = function () {
+          addSelectedGiftToCart(variantId); // Add the selected freebie to the cart
+          document.getElementById('gift-selection-modal').style.display = 'none'; // Close the modal
+        };
+      })
+      .catch(error => console.error(`Error fetching product data for ${productUrl}:`, error));
+  }
+
+  // Function to check if a product with a duplicate color exists
+  async function hasDuplicateColor(cartItems, freeGiftColor) {
+    for (const item of cartItems) {
+      const productColor = item.dataset.productColor; // Assuming color is exposed in HTML
+      if (productColor === freeGiftColor) {
+        return true; // Duplicate color found
+      }
+    }
+    return false; // No duplicate color found
+  }
+
+  // Function to show the gift selection modal
+  function showModal() {
+    const modal = document.getElementById('gift-selection-modal');
+    modal.style.display = 'block';
+
+    // Fetch and update gift options for the modal
+    fetchProductDataAndUpdateModal(freeGiftProductUrls[0], 'gift1-img', 'gift1-name', 'gift1-btn');
+    fetchProductDataAndUpdateModal(freeGiftProductUrls[1], 'gift2-img', 'gift2-name', 'gift2-btn');
+
+    // Close the modal when the close button is clicked
+    document.querySelector('.close-btn5').onclick = function () {
+      modal.style.display = 'none';
+    };
+  }
+
+  // Function to check cart status and determine if the gift modal should be shown
+  function checkCartStatus() {
+    // ADDED: Check if B2G1 is active before proceeding
+    if (sessionStorage.getItem('b2g1Active') === 'true') {
+      console.log('B2G1 is active, skipping gift selection modal.');
+      return; // ADDED: Stop here, do not show gift modal if B2G1 is active
+    }
+
+    fetch('/cart.js')
+      .then(response => response.json())
+      .then(async cart => {
+        const hasFreeGift = cart.items.some(item => freeGiftProductUrls.some(url => item.url.includes(url)));
+        if (!hasFreeGift) {
+          let totalEligiblePrice = 0;
+
+          const cartItems = document.querySelectorAll('.cart-item');
+
+          for (const item of cart.items) {
+            const productHandle = item.handle;
+
+            // Fetch product data to determine eligibility
+            await fetch(`/products/${productHandle}.json`)
+              .then(response => response.json())
+              .then(async productData => {
+                const product = productData.product;
+                const isEligible = product.tags.includes('freebie popup');
+                const freeGiftColor = product.metafields?.custom?.product_color_name || '';
+
+                if (isEligible) {
+                  totalEligiblePrice += item.final_line_price;
+                }
+
+                // Show the modal if eligible spend is above threshold and no duplicate color
+                if (totalEligiblePrice >= 1000 * 100) { // Adjust your threshold
+                  const isDuplicate = await hasDuplicateColor(cartItems, freeGiftColor);
+
+                  if (!isDuplicate) {
+                    showModal();
+                  } else {
+                    console.log(`Skipping free gift due to duplicate color: ${freeGiftColor}`);
+                  }
+                }
+              })
+              .catch(error => console.error('Error fetching product data:', error));
+          }
+        }
+      })
+      .catch(error => console.error('Error fetching cart data:', error));
+  }
+
+  // Poll the cart every 5 seconds to check if the gift modal should be shown
+  setInterval(checkCartStatus, 9000);
+
+  // Initial check on page load
+  //checkCartStatus();  <===== COMMENTED OUT THIS LINE
+});
+</script>
 {{ 'component-cart.css' | asset_url | stylesheet_tag }}
 {{ 'component-cart-items.css' | asset_url | stylesheet_tag }}
 {{ 'component-totals.css' | asset_url | stylesheet_tag }}
@@ -243,32 +368,6 @@
 {%- endunless -%}
 
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
-
-{% comment %} --- START: Pre-load Freebie Product Data for JavaScript (Add this to your cart.liquid or relevant template) --- {% endcomment %}
-{%- assign freebie_handle_1 = 'bodyx-unisex-deodorant-xtacy-deo-150ml' -%}
-{%- assign freebie_handle_2 = 'bodyx-unisex-deodorant-xpression-deo-150ml' -%}
-
-{%- assign freebie_product_1_obj = all_products[freebie_handle_1] -%}
-{%- assign freebie_product_2_obj = all_products[freebie_handle_2] -%}
-
-<script id="freebieProductDataScript">
-  window.freebieProductData = {
-    {% if freebie_product_1_obj %}
-      '{{ freebie_handle_1 }}': {{ freebie_product_1_obj | json }},
-    {% else %}
-      '{{ freebie_handle_1 }}': null,
-    {% endif %}
-    {% if freebie_product_2_obj %}
-      '{{ freebie_handle_2 }}': {{ freebie_product_2_obj | json }}
-    {% else %}
-      '{{ freebie_handle_2 }}': null,
-    {% endif %}
-  };
-  // For debugging in your browser console:
-  // console.log("Pre-loaded Freebie Product Data:", JSON.parse(JSON.stringify(window.freebieProductData)));
-</script>
-{% comment %} --- END: Pre-load Freebie Product Data --- {% endcomment %}
-
 
 <cart-items class="gradient color-{{ section.settings.color_scheme }} isolate{% if cart == empty %} is-empty{% else %} section-{{ section.id }}-padding{% endif %}">
   <div class="page-width int-title-head">
@@ -413,9 +512,7 @@
                             {%- endfor -%}
                           </dl>
 
-                          {%- if item.selling_plan_allocation -%}
-                            <p class="product-option">{{ item.selling_plan_allocation.selling_plan.name }}</p>
-                          {%- endif -%}
+                          <p class="product-option">{{ item.selling_plan_allocation.selling_plan.name }}</p>
                         {%- endif -%}
 
                         <ul
@@ -454,18 +551,18 @@
                             </dd>
                           </dl>
                         {% else %}
-                          <span class="price price--end"> {{ item.original_line_price | money }} </span>
+                          <span class="price price--end"> Price: {{ item.original_line_price | money }} </span>
                         {% endif %}
                       </div>
                     </div>
 
-                    <div class="cart-item__quantity{% if item.variant.quantity_rule.min > 1 or item.variant.quantity_rule.max != null or item.variant.quantity_rule.increment > 1 %} cart-item__quantity--info{% endif %}">
+                    <div class="cart-item__quantity{% if has_qty_rules or has_vol_pricing %} cart-item__quantity--info{% endif %}">
                       <quantity-popover>
                         <div class="cart-item__quantity-wrapper quantity-popover-wrapper">
                           <label class="visually-hidden" for="Quantity-{{ item.index | plus: 1 }}">
                             {{ 'products.product.quantity.label' | t }}
                           </label>
-                          <div class="quantity-popover-container{% if item.variant.quantity_rule.min > 1 or item.variant.quantity_rule.max != null or item.variant.quantity_rule.increment > 1 %} quantity-popover-container--hover{% endif %}">
+                          <div class="quantity-popover-container{% if has_qty_rules or has_vol_pricing %} quantity-popover-container--hover{% endif %}">
                             <quantity-input class="quantity cart-quantity">
                               <button class="quantity__button no-js-hidden" name="minus" type="button">
                                 <span class="visually-hidden">
@@ -481,11 +578,11 @@
                                 value="{{ item.quantity }}"
                                 {% # theme-check-disable %}
                                 data-cart-quantity="{{ cart | item_count_for_variant: item.variant.id }}"
-                                min="{{ item.variant.quantity_rule.min | default: 1 }}"
+                                min="{{ item.variant.quantity_rule.min }}"
                                 {% if item.variant.quantity_rule.max != null %}
                                   max="{{ item.variant.quantity_rule.max }}"
                                 {% endif %}
-                                step="{{ item.variant.quantity_rule.increment | default: 1 }}"
+                                step="{{ item.variant.quantity_rule.increment }}"
                                 {% # theme-check-enable %}
                                 aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title | escape }}"
                                 id="Quantity-{{ item.index | plus: 1 }}"
@@ -516,11 +613,11 @@
                     </div>
 
                     {% if compare_price and compare_price > final_price %}
-                      <span class="discouned-custom-div " style="display: block; text-align: right; padding-right: 15px; text-decoration:line-through;" >
+                      <span class="discouned-custom-div " style="text-decoration:line-through;">
                         {{- compare_price | times: item.quantity | money -}}
                       </span>
                     {% else %}
-                      <div class="single-item-price" style="display: block; text-align: right; padding-right: 15px;">{{ item.original_price | times: item.quantity | money }}</div>
+                      <div class="single-item-price">{{ item.original_line_price | money }}</div>
                     {% endif %}
 
                     <div class="cart-item__totals right small-hide">
@@ -556,6 +653,10 @@
             {%- endif -%}
           </div>
         </div>
+        {{ 'component-cart.css' | asset_url | stylesheet_tag }}
+        {{ 'component-totals.css' | asset_url | stylesheet_tag }}
+        {{ 'component-price.css' | asset_url | stylesheet_tag }}
+        {{ 'component-discounts.css' | asset_url | stylesheet_tag }}
       </div>
       <p class="visually-hidden" id="cart-live-region-text" aria-live="polite" role="status"></p>
       <p
@@ -572,64 +673,55 @@
 </cart-items>
 
 <script>
-  // Quantity AJAX update script
   document.addEventListener('DOMContentLoaded', function () {
-    const quantityInputs = document.querySelectorAll('quantity-input .quantity__input');
+    const quantityInputs = document.querySelectorAll('.quantity__input');
 
     quantityInputs.forEach(input => {
       input.addEventListener('change', function () {
-        const variantId = this.dataset.quantityVariantId;
+        const itemId = this.dataset.quantityVariantId;
         const newQuantity = this.value;
-        updateCartItemById(variantId, newQuantity);
+        
+        // Update the cart via AJAX
+        updateCartItem(itemId, newQuantity);
       });
     });
   });
 
-  function updateCartItemById(variantId, newQuantity) {
+  function updateCartItem(itemId, newQuantity) {
     fetch('/cart/change.js', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: variantId, quantity: newQuantity })
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: itemId,
+        quantity: newQuantity
+      })
     })
     .then(response => response.json())
-    .then(cartData => {
-      if (typeof Shopify !== 'undefined' && Shopify.formatMoney) {
-        updateLiveTotals(cartData);
-      }
+    .then(data => {
+      // Update the total price on the page
+      updateTotalPrice(data);
     })
     .catch(error => {
-      console.error('Error updating cart item via AJAX:', error);
+      console.error('Error updating cart item:', error);
     });
   }
 
- function updateLiveTotals(cartData) {
+  function updateTotalPrice(cartData) {
     cartData.items.forEach(item => {
-        const itemRow = document.querySelector(`quantity-input input[data-quantity-variant-id="${item.id}"]`)?.closest('.cart-item');
-        if (itemRow) {
-            const priceWrapperMobile = itemRow.querySelector('.cart-item__totals.right.medium-hide.large-up-hide .cart-item__price-wrapper');
-            const priceWrapperDesktop = itemRow.querySelector('.cart-item__totals.right.small-hide .cart-item__price-wrapper');
-            [priceWrapperMobile, priceWrapperDesktop].forEach(pw => {
-                if (pw) {
-                    if (item.original_line_price !== item.final_line_price) {
-                        pw.innerHTML = `
-                            <dl class="cart-item__discounted-prices">
-                                <dt class="visually-hidden">${ (typeof Shopify !== 'undefined' && Shopify.translation?.regular_price) || 'Regular price'}</dt>
-                                <dd><s class="cart-item__old-price price price--end">${Shopify.formatMoney(item.original_line_price)}</s></dd>
-                                <dt class="visually-hidden">${ (typeof Shopify !== 'undefined' && Shopify.translation?.sale_price) || 'Sale price'}</dt>
-                                <dd class="price price--end">${Shopify.formatMoney(item.final_line_price)}</dd>
-                            </dl>`;
-                    } else {
-                        pw.innerHTML = `<span class="price price--end">${Shopify.formatMoney(item.final_line_price)}</span>`;
-                    }
-                }
-            });
-        }
+      const itemRow = document.querySelector(`#CartItem-${item.id}`);
+      const itemTotal = itemRow.querySelector('.cart-item__totals .price');
+
+      if (itemTotal) {
+        itemTotal.textContent = Shopify.formatMoney(item.final_line_price);
+      }
     });
-    const subtotalElement = document.querySelector('.totals__subtotal-value, #CartSubtotal .money');
-    if (subtotalElement) {
-        subtotalElement.innerHTML = Shopify.formatMoney(cartData.total_price);
-    }
-}
+
+    // Update the overall cart total
+    const cartTotal = document.querySelector('.totals__total-value');
+    cartTotal.textContent = Shopify.formatMoney(cartData.total_price);
+  }
 </script>
 
 <style>
@@ -677,34 +769,36 @@
 {% endschema %}
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
-<ul class="color-info" style="display:none;">
-  {% for item in cart.items %}
-  <li class="cart-item-data" 
-      id="CartItemInfo-{{ item.key }}" 
-      data-product-handle="{{ item.product.handle }}" 
-      data-product-color="{% if item.product.metafields.custom.product_color_name %}{{ item.product.metafields.custom.product_color_name.value }}{% else %}unknown{% endif %}"
-      data-product-sku="{{ item.sku }}" 
-      data-product-variant-id="{{ item.variant_id }}"
-      data-line-item-key="{{ item.key }}"
-      data-product-price="{{ item.final_line_price }}" 
-      data-product-type="{% if item.final_price == 0 %}free{% else %}paid{% endif %}"
-      data-product-quantity="{{ item.quantity }}"
-      data-b2g1="{% if item.product.tags contains 'buy 2 get 1 free' %}true{% else %}false{% endif %}">
-  </li>
-  {% endfor %}
+<ul class="color-info">
+  {% for item in cart.items %}
+  <li class="cart-item custom-cart-page" 
+      id="CartItem-{{ forloop.index }}" 
+      data-product-handle="{{ item.product.handle }}" 
+      data-product-color="{% if item.product.metafields.custom.product_color_name %}{{ item.product.metafields.custom.product_color_name.value }}{% else %}unknown{% endif %}"
+      data-product-sku="{{ item.sku }}" 
+      data-product-variant-id="{{ item.variant_id }}"
+      data-line-item-key="{{ item.key }}"
+      data-product-price="{{ item.final_line_price | divided_by: 100 }}"
+      data-product-type="{% if item.final_line_price == 0 %}free{% else %}paid{% endif %}"
+      data-product-quantity="{{ item.quantity }}"
+      data-b2g1="{% if item.product.tags contains 'buy 2 get 1 free' %}true{% else %}false{% endif %}">
+  </li>
+  {% endfor %}
 </ul>
 
 {%- assign b2g1_products_in_cart = false -%}
 {%- assign has_zero_price_item_liquid = false -%}
+
 {%- for item in cart.items -%}
-  {%- if item.product.tags contains 'buy 2 get 1 free' -%}
-    {%- assign b2g1_products_in_cart = true -%}
-  {%- endif -%}
-  {%- if item.final_price == 0 -%}
-    {%- assign has_zero_price_item_liquid = true -%}
-  {%- endif -%}
+  {%- if item.product.tags contains 'buy 2 get 1 free' -%}
+    {%- assign b2g1_products_in_cart = true -%}
+  {%- endif -%}
+  {%- if item.final_price == 0 -%}
+    {%- assign has_zero_price_item_liquid = true -%}
+  {%- endif -%}
 {%- endfor -%}
 
+{% comment %} Corrected Liquid condition below: {% endcomment %}
 {% if b2g1_products_in_cart and has_zero_price_item_liquid == false %}
   <div class="b2g1-progress cart-progress">
     <span class="close-progress">&times;</span>
@@ -738,7 +832,7 @@
         </div>
         <div class="gift-box-text">
           <h3 id="gift1-name">BodyX Unisex Deodorant XTACY Deo 150ML</h3>
-          <button id="gift1-btn" class="gift-btn">Add to Cart</button>
+          <button id="gift1-btn" class="gift-btn">Add Gift 1 to Cart</button>
         </div>
       </div>
       <div class="pro1">
@@ -747,40 +841,296 @@
         </div>
         <div class="gift-box-text">
           <h3 id="gift2-name">BodyX Unisex Deodorant XPRESSION Deo 150ML</h3>
-          <button id="gift2-btn" class="gift-btn">Add to Cart</button>
+          <button id="gift2-btn" class="gift-btn">Add Gift 2 to Cart</button>
         </div>
       </div>
     </div>
   </div>
 </div>
+<style>
+.b2g1-progress {
+  position: fixed;
+  bottom: 0px;
+  left: 0%;
+  /* transform: translateX(-50%); */
+  width: 400px;
+  background: white;
+  padding: 20px;
+  border-radius: 0px 15px 0px 0px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1;
+}
 
+.close-progress {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #666;
+}
+
+.close-progress:hover {
+  color: #333;
+}
+
+.progress-container { 
+  width: 100%; 
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.progress-header h3 { 
+  font-size: 18px; 
+  font-weight: 600; 
+  color: #1f2937; 
+  margin: 0; 
+}
+
+.item-count { 
+  font-size: 15px; 
+  color: #4b5563; 
+  font-weight: 500; 
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 20px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  background-color:#177e37 !important;
+  height: 100%;
+  font-size: 12px;
+  line-height: 20px;
+  color: #fff;
+  text-align: center;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.15);
+  transition: width 0.6s ease, background-color 0.6s ease;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-bar.complete { 
+  background-color: #10b981 !important; 
+} /* Green when complete */
+
+.progress-message {
+  margin-top: 12px;
+  font-size: 15px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Violation Popup Styles */
+.cart-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 9999;
+  max-width: 400px;
+}
+
+.cart-popup p { 
+  margin-bottom: 20px; 
+  line-height: 1.5; 
+  color: #374151; 
+}
+
+.cart-popup button {
+  background: #ef4444;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.cart-popup button:hover { 
+  background: #dc2626; 
+}
+
+.cart-popup .close-btn { 
+  position: absolute; 
+  top: 5px; 
+  right: 10px; 
+  cursor: pointer; 
+}
+
+/* Gift Modal Styles */
+.gift-main-box {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.24);
+  display: none;
+  z-index: 9;
+}
+
+.product-gift-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+}
+
+.product-gift {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pro1 {
+  flex: 1;
+  min-width: 250px;
+  text-align: center;
+}
+
+.pro-gift-img1 img {
+  max-width: 100%;
+  height: auto;
+}
+
+.gift-box-text {
+  margin-top: 15px;
+}
+
+.gift-btn {
+  background: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.gift-btn:hover {
+  background: #45a049;
+}
+
+.gift-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+  /* new free bei style */
+  @media (max-width: 768px) {
+    .product-gift-popup {
+        width: 580px !important;
+    }
+    .item-count{
+      width:90px;
+    }
+    .progress-header {
+    align-items: baseline;
+    }
+    .product-gift {
+    flex-wrap: nowrap !important;
+      gap: 2px !important;
+
+    }
+    .b2g1-progress {
+  bottom: 20px;
+  left: 50%;
+        border-radius: 12px !important;
+  transform: translateX(-50%);
+  width: 88%!important
+    }
+  }
+      .product-gift-popup{
+      height:fit-content !important;
+      min-height:fit-content;
+    }
+  @media (max-width: 500px) {
+  .product-gift-popup {
+    padding: 20px 16px !important;
+  }
+
+    .pro1 {
+        width: 68px;
+        min-width: 50% !important;
+    }
+  }
+</style>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  // --- B2G1 Progress Bar State & Logic ---
+  // Initialize progress bar closed state
   let progressBarClosed = false;
   let offerComplete = false;
 
-  function initializeB2G1ProgressClose() {
-    const closeProgressBtn = document.querySelector('.b2g1-progress .close-progress');
-    if (closeProgressBtn) {
-      closeProgressBtn.addEventListener('click', function() {
-        const progressContainer = this.closest('.b2g1-progress');
-        if (progressContainer) {
-          progressContainer.style.display = 'none';
-          progressBarClosed = true;
-        }
+  // Add close button functionality
+  const closeProgressBtn = document.querySelector('.close-progress');
+  if (closeProgressBtn) {
+    closeProgressBtn.addEventListener('click', function() {
+      const progressContainer = document.querySelector('.b2g1-progress');
+      if (progressContainer) {
+        progressContainer.style.display = 'none';
+        progressBarClosed = true;
+      }
+    });
+  }
+
+  /* ---------- Violation Popup Display ---------- */
+  if (sessionStorage.getItem('showPopup') === 'true') {
+    sessionStorage.removeItem('showPopup');
+    const popup = document.getElementById('cart-popup');
+    if (popup) {
+      popup.style.display = 'block';
+      document.getElementById('close-popup').addEventListener('click', function() {
+        popup.style.display = 'none';
       });
+      const closeBtn = popup.querySelector('.close-btn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+          popup.style.display = 'none';
+        });
+      }
     }
   }
 
+  /* ---------- Product Removal (B2G1 Enforcement) ---------- */
   async function removeProductFromCart(lineItemKey) {
     try {
+      console.log("Attempting removal for lineItemKey:", lineItemKey);
       const response = await fetch('/cart/change.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: lineItemKey, quantity: 0 }) 
+        body: JSON.stringify({ id: lineItemKey, quantity: 0 })
       });
-      return response.ok;
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error removing product:', errorData);
+        return false;
+      }
+      console.log(`Successfully removed product with lineItemKey: ${lineItemKey}`);
+      return true;
     } catch (error) {
       console.error('Error in removeProductFromCart:', error);
       return false;
@@ -788,429 +1138,266 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   async function enforceB2g1Rules() {
-    const cartItemDataElements = document.querySelectorAll('.color-info .cart-item-data');
+    const cartItems = document.querySelectorAll('.color-info .cart-item');
     const skuMap = {};
     let productRemoved = false;
-    let isB2G1OfferActive = false;
+    let b2g1Active = false;
 
-    cartItemDataElements.forEach(item => {
-      const sku = item.dataset.productSku;
-      const quantity = parseInt(item.dataset.productQuantity) || 0;
-      const type = item.dataset.productType;
-      const lineItemKey = item.dataset.lineItemKey;
+    cartItems.forEach(item => {
+      const sku = item.getAttribute('data-product-sku');
+      const quantity = parseInt(item.getAttribute('data-product-quantity')) || 0;
+      const type = item.getAttribute('data-product-type');
+      const lineItemKey = item.getAttribute('data-line-item-key');
       
       if (!sku || !lineItemKey) return;
 
-      if (!skuMap[sku]) skuMap[sku] = { paidQuantity: 0, freeItems: [] };
-      if (type === 'free') skuMap[sku].freeItems.push({ lineItemKey, quantity });
-      else skuMap[sku].paidQuantity += quantity;
+      if (!skuMap[sku]) {
+        skuMap[sku] = { paidQuantity: 0, freeItems: [] };
+      }
+
+      if (type === 'free') {
+        skuMap[sku].freeItems.push({ lineItemKey, quantity });
+      } else {
+        skuMap[sku].paidQuantity += quantity;
+      }
     });
 
     for (const sku in skuMap) {
       const { paidQuantity, freeItems } = skuMap[sku];
       const freeQuantity = freeItems.reduce((sum, item) => sum + item.quantity, 0);
-      
-      if (freeItems.length > 0 && (paidQuantity + freeQuantity) > 2) {
+      const totalQuantity = paidQuantity + freeQuantity;
+
+      if (freeItems.length > 0 && totalQuantity > 2) {
         for (const freeItem of freeItems) {
-          if (await removeProductFromCart(freeItem.lineItemKey)) productRemoved = true;
+          const removed = await removeProductFromCart(freeItem.lineItemKey);
+          if (removed) {
+            productRemoved = true;
+          }
         }
       }
-      if (freeItems.length > 0 && (paidQuantity + freeQuantity) <= 2 && paidQuantity >= freeQuantity * 2) { 
-        isB2G1OfferActive = true; 
+
+      if (freeItems.length > 0 && totalQuantity <= 2) {
+        b2g1Active = true;
       }
     }
 
-    if (isB2G1OfferActive) sessionStorage.setItem('b2g1Active', 'true');
-    else sessionStorage.removeItem('b2g1Active');
+    if (b2g1Active) {
+      sessionStorage.setItem('b2g1Active', 'true');
+    } else {
+      sessionStorage.removeItem('b2g1Active');
+    }
 
     if (productRemoved) {
-      sessionStorage.setItem('showB2G1ViolationPopup', 'true'); 
+      sessionStorage.setItem('showPopup', 'true');
       location.reload();
     }
-  }  
-  
-  function updateB2G1ProgressBar() {
-    if (progressBarClosed) return;
+  }  function updateProgressBar() {
+    if (progressBarClosed) {
+      return;
+    }
 
     fetch('/cart.js')
       .then(response => response.json())
       .then(cart => {
-        const b2g1DataItems = Array.from(document.querySelectorAll('.color-info .cart-item-data[data-b2g1="true"]'));
+        const allItems = Array.from(document.querySelectorAll('.cart-item'));
+        const b2g1Items = allItems.filter(item => {
+          const attr = item.getAttribute('data-b2g1');
+          return attr && attr.trim() === "true";
+        });
+
         const progressContainer = document.querySelector('.b2g1-progress');
-        const freebieModalElement = document.getElementById('gift-selection-modal');
+        const freebieModal = document.getElementById('gift-selection-modal');
 
-        if (!progressContainer) return;
-
-        const freebieModalVisible = freebieModalElement && window.getComputedStyle(freebieModalElement).display !== 'none';
-        const hasAnyFreeItemInCart = cart.items.some(item => item.final_price === 0); 
-        const isB2G1SessionActive = sessionStorage.getItem('b2g1Active') === 'true';
-
-        if (freebieModalVisible || b2g1DataItems.length === 0 || (hasAnyFreeItemInCart && !isB2G1SessionActive) ) {
-          progressContainer.style.display = 'none';
-          return;
-        } else {
-          progressContainer.style.display = 'block';
+        let modalDisplay = 'none';
+        if (freebieModal) {
+          modalDisplay = window.getComputedStyle(freebieModal).getPropertyValue('display');
         }
 
-        let qualifyingCount = b2g1DataItems.reduce((acc, item) => {
-            return acc + (parseInt(item.dataset.productQuantity) || 0);
-        }, 0);
-        
-        const displayedCount = Math.min(qualifyingCount, 3); 
+        // Check if there is any item in the cart with 0 price (free item)
+        const hasZeroPriceItem = cart.items.some(item => item.final_price === 0);
 
-        const progressBar = progressContainer.querySelector('.progress-bar');
-        const itemCountEl = progressContainer.querySelector('.item-count');
-        const messageEl = progressContainer.querySelector('.progress-message');
+        if (hasZeroPriceItem || (freebieModal && modalDisplay !== 'none') || b2g1Items.length === 0) {
+          progressContainer.style.setProperty('display', 'none', 'important');
+          return; // Exit if a free item is present or other conditions met
+        } else {
+          progressContainer.style.setProperty('display', 'block', 'important');
+        }
 
-        if (!progressBar || !itemCountEl || !messageEl) return;
+        let qualifyingCount = 0;
+        b2g1Items.forEach(item => {
+          qualifyingCount += parseInt(item.getAttribute('data-product-quantity')) || 0;
+        });
+
+        const displayedCount = Math.min(qualifyingCount, 3);
+
+        const progressBar = document.querySelector('.progress-bar');
+        const itemCount = document.querySelector('.item-count');
+        const message = document.querySelector('.progress-message');
 
         let percent = Math.min((displayedCount / 3) * 100, 100);
-        progressBar.style.width = `${percent}%`;
-        progressBar.textContent = displayedCount >= 3 ? "✓" : "";
-        itemCountEl.textContent = `${displayedCount}/3 items`;
+        progressBar.style.width = percent + "%";
+        itemCount.textContent = `${displayedCount}/3 items`;
 
         if (displayedCount < 3) {
-          const remaining = 3 - displayedCount;
-          messageEl.innerHTML = `You're almost there! Add ${remaining} more ${remaining === 1 ? 'item' : 'items'} from the <a href="/collections/buy-2-get-1-free" style="color:red; text-decoration:underline;">Buy 2 Get 1 Free page</a> to avail this offer.`;
+          const remainingItems = 3 - displayedCount;
+          const itemText = remainingItems === 1 ? 'item' : 'items';
+          message.innerHTML = `You're almost there! Add ${remainingItems} more ${itemText} from this <a href="https://ebodycare.in/collections/buy-2-get-1-free" style="color:red;">page</a> to avail this offer.`;
           progressBar.classList.remove('complete');
-          offerComplete = false;
         } else {
-          messageEl.textContent = "Congratulations! You've unlocked the Buy 2 Get 1 Free offer!";
+          message.textContent = "You have availed the Buy 2 Get 1 offer!";
           progressBar.classList.add('complete');
-          if (!offerComplete && typeof confetti === 'function') {
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.9 } });
+          if (!offerComplete) {
+            popConfetti();
             offerComplete = true;
           }
         }
       })
-      .catch(error => console.error("Error updating B2G1 progress bar:", error));
+      .catch(error => console.error("Error fetching cart data:", error));
   }
 
-  function initializeViolationPopup() {
-    if (sessionStorage.getItem('showB2G1ViolationPopup') === 'true') {
-      sessionStorage.removeItem('showB2G1ViolationPopup');
-      const popupHTML = `
-        <div id="cart-violation-popup" class="cart-popup" style="display:block;">
-          <span class="close-btn" style="cursor:pointer; font-size:20px; position:absolute; top:10px; right:15px;">&times;</span>
-          <p>A free item from the "Buy 2 Get 1 Free" offer was adjusted as the conditions were no longer met. Please ensure you have the correct paid items to receive the free one.</p>
-        </div>`;
-      document.body.insertAdjacentHTML('beforeend', popupHTML);
-      const popup = document.getElementById('cart-violation-popup');
-      if (popup) {
-        popup.querySelector('.close-btn').addEventListener('click', () => popup.remove()); 
-      }
-    }
+  function popConfetti() {
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.9 }
+    });
   }
 
-  // --- Freebie Gift Modal Logic (Using Pre-loaded Data) ---
-  const FREEBIE_ELIGIBILITY_THRESHOLD_CENTS = 100000; 
-  // Using handles now, as they are keys in window.freebieProductData
-  const freeGiftProductHandles = [ 
-    'bodyx-unisex-deodorant-xtacy-deo-150ml',
-    'bodyx-unisex-deodorant-xpression-deo-150ml'
+  // Initialize functionality
+  enforceB2g1Rules();
+  updateProgressBar();
+  setInterval(updateProgressBar, 5000);
+
+  // Add quantity button listeners
+  document.querySelectorAll('.quantity__button, .quantity__input').forEach(element => {
+    const eventType = element.tagName === 'INPUT' ? 'change' : 'click';
+    element.addEventListener(eventType, function() {
+      setTimeout(() => location.reload(), 1000);
+    });
+  });  /* ---------- Freebie Popup (Gift Modal) ---------- */
+  const freeGiftProductUrls = [
+    '/products/bodyx-unisex-deodorant-xtacy-deo-150ml',
+    '/products/bodyx-unisex-deodorant-xpression-deo-150ml'
   ];
-  let freebiePopupManuallyClosedThisPageLoad = false; 
 
-  /**
-  * Uses pre-loaded product data (from Liquid) to check stock and update modal.
-  * Returns true if product is available and displayed, false otherwise.
-  */
- // REPLACE the existing processFreebieProductFromPreloadedData function with this one:
-// REPLACE the existing processFreebieProductFromPreloadedData function 
-// in your main JavaScript block with this one:
-
-async function processFreebieProductFromPreloadedData(productHandle, imgId, nameId, buttonId) {
-    console.log(`Freebie Setup (Liquid): Processing data for ${productHandle}`);
-    
-    const imgEl = document.getElementById(imgId);
-    const nameEl = document.getElementById(nameId);
-    const buttonEl = document.getElementById(buttonId);
-    let giftContainer = null;
-
-    for (const el of [imgEl, nameEl, buttonEl]) {
-      if (el) { giftContainer = el.closest('.pro1'); break; }
-    }
-
-    if (!giftContainer) {
-      console.warn(`Freebie Setup (Liquid): Could not find .pro1 container for ${productHandle}. Cannot display this gift.`);
-      return false;
-    }
-    giftContainer.style.display = 'none'; // Hide initially
-
-    const product = (window.freebieProductData && window.freebieProductData[productHandle]) 
-                    ? window.freebieProductData[productHandle] 
-                    : null;
-
-    if (!product) {
-        console.error(`Freebie Setup (Liquid): Pre-loaded product data NOT FOUND for handle: ${productHandle}. Ensure Liquid pre-loading script is correct and runs before this.`);
-        return false;
-    }
-    if (product === null) { 
-        console.error(`Freebie Setup (Liquid): Product with handle '${productHandle}' was NULL in pre-loaded data (Liquid couldn't find all_products['${productHandle}']).`);
-        return false;
-    }
-    if (!product.variants || product.variants.length === 0) {
-        console.error(`Freebie Setup (Liquid): No variants found in pre-loaded data for ${product.title || productHandle}.`);
-        return false;
-    }
-
-    let isActuallyAvailable = false;
-    const firstVariant = product.variants[0]; 
-
-    if (typeof firstVariant.available === 'boolean') {
-        isActuallyAvailable = firstVariant.available;
-    } else if (typeof product.available === 'boolean') {
-        isActuallyAvailable = product.available;
-        console.warn(`Stock Check (Liquid Data): ${product.title || productHandle} - variant.available missing, using product.available = ${isActuallyAvailable}`);
-    } else if (firstVariant.inventory_management === 'shopify') {
-        if (firstVariant.inventory_policy === 'continue') {
-            isActuallyAvailable = true;
-        } else if (typeof firstVariant.inventory_quantity === 'number') {
-            isActuallyAvailable = firstVariant.inventory_quantity > 0;
-        } else {
-            console.warn(`Stock Check (Liquid Data): ${product.title || productHandle} - Shopify managed, but critical inventory details missing. Assuming unavailable.`);
-            isActuallyAvailable = false; 
-        }
-    } else { 
-        console.warn(`Stock Check (Liquid Data): ${product.title || productHandle} - No clear Shopify availability data. Assuming unavailable for safety.`);
-        isActuallyAvailable = false;
-    }
-    
-    console.log(`Freebie Setup (Liquid): ${product.title || productHandle}, Final Determined Available: ${isActuallyAvailable}`);
-
-    if (!isActuallyAvailable) {
-        return false;
-    }
-
-    // --- Update UI ---
-    let imgSrc = '';
-
-    // **MODIFICATION: Use static URL for XTACY Deo**
-    if (productHandle === 'bodyx-unisex-deodorant-xtacy-deo-150ml') {
-        imgSrc = 'https://ebodycare.in/cdn/shop/files/Xtacy_ccd1ef4b-ebad-4f20-8d66-2549c78fc5ed_1440x.jpg?v=1745215338';
-        console.log(`Freebie Debug (Image): Using STATIC URL for ${productHandle}: ${imgSrc}`);
-    } else {
-        // Dynamic image sourcing for other products (e.g., XPRESSION Deo)
-        if (product.images && product.images.length > 0 && product.images[0] && product.images[0].src) {
-            imgSrc = product.images[0].src;
-            console.log(`Freebie Debug (Image): Using product.images[0].src: ${imgSrc} for ${productHandle}`);
-        } else if (product.featured_image && typeof product.featured_image === 'string' && product.featured_image.startsWith('http')) {
-            imgSrc = product.featured_image;
-            console.log(`Freebie Debug (Image): Using product.featured_image (string URL): ${imgSrc} for ${productHandle}`);
-        } else {
-            console.warn(`Freebie Debug (Image): No suitable dynamic image source found in pre-loaded data for ${productHandle}. Images array:`, product.images, "Featured image:", product.featured_image);
-        }
-    }
-
-    if(imgEl) {
-        if (imgSrc) {
-            imgEl.src = imgSrc;
-            imgEl.alt = product.title || productHandle || 'Free Gift Image';
-        } else {
-            imgEl.src = ''; 
-            imgEl.alt = 'Image not available';
-            console.warn(`Freebie Debug (Image): No imgSrc determined for ${productHandle}. Clearing image.`);
-        }
-    } else {
-        console.warn(`Freebie Debug (Image): imgEl (id: ${imgId}) not found in DOM for ${productHandle}.`);
-    }
-
-    if (nameEl) nameEl.textContent = product.title || productHandle;
-
-    if (buttonEl && firstVariant) {
-        buttonEl.disabled = false;
-        buttonEl.textContent = 'Add to Cart';
-        const newButtonEl = buttonEl.cloneNode(true);
-        buttonEl.parentNode.replaceChild(newButtonEl, buttonEl);
-        newButtonEl.addEventListener('click', () => {
-            addSelectedFreeGiftToCart(firstVariant.id); 
-            const modal = document.getElementById('gift-selection-modal');
-            if (modal) modal.style.display = 'none';
-        });
-    } else if (buttonEl) {
-        buttonEl.disabled = true;
-        buttonEl.textContent = 'Unavailable';
-    }
-
-    if (giftContainer) giftContainer.style.display = ''; 
-    console.log(`Freebie Setup (Liquid): ${product.title || productHandle} is available and displayed.`);
-    return true;
-  }
-
-  async function showFreebieModal() {
-    if (freebiePopupManuallyClosedThisPageLoad) {
-      // console.log("Freebie Modal: Already closed by user, not showing");
-      return;
-    }
-
-    const modal = document.getElementById('gift-selection-modal');
-    if (!modal) {
-      console.error("Freebie Modal: Modal element not found");
-      return;
-    }
-    // console.log("Freebie Modal: Checking gift availability using pre-loaded data...");
-
-    const availabilityPromises = [
-      processFreebieProductFromPreloadedData(freeGiftProductHandles[0], 'gift1-img', 'gift1-name', 'gift1-btn'),
-      processFreebieProductFromPreloadedData(freeGiftProductHandles[1], 'gift2-img', 'gift2-name', 'gift2-btn')
-    ];
-
-    try {
-      const results = await Promise.all(availabilityPromises);
-      const availableGiftsCount = results.filter(Boolean).length;
-      
-      console.log(`Freebie Modal: ${availableGiftsCount} gift(s) available after stock check (using pre-loaded data).`);
-
-      if (availableGiftsCount > 0) {
-        modal.style.display = 'block';
-        const closeButton = document.getElementById('freebie-close-btn');
-        if (closeButton) {
-          const newCloseButton = closeButton.cloneNode(true);
-          closeButton.parentNode.replaceChild(newCloseButton, closeButton);
-          newCloseButton.addEventListener('click', () => {
-            modal.style.display = 'none';
-            freebiePopupManuallyClosedThisPageLoad = true;
-            // console.log("Freebie Modal: Closed by user");
-          });
-        }
-        // console.log("Freebie Modal: Displayed successfully (using pre-loaded data)");
-      } else {
-        // console.log("Freebie Modal: No gifts available to display, modal not shown (using pre-loaded data)");
-        modal.style.display = 'none';
+  async function hasDuplicateColor(cartElements, freeGiftColor) {
+    for (const element of cartElements) {
+      const productColor = element.dataset.productColor;
+      if (productColor === freeGiftColor) {
+        return true;
       }
-    } catch (error) {
-      console.error("Freebie Modal: Error checking gift availability (using pre-loaded data):", error);
-      modal.style.display = 'none';
     }
+    return false;
   }
 
-  function addSelectedFreeGiftToCart(variantId) {
-    // console.log(`Adding free gift variant ${variantId} to cart`);
+  function showModal() {
+    const modal = document.getElementById('gift-selection-modal');
+    modal.style.display = 'block';
+
+    fetchProductDataAndUpdateModal(freeGiftProductUrls[0], 'gift1-img', 'gift1-name', 'gift1-btn');
+    fetchProductDataAndUpdateModal(freeGiftProductUrls[1], 'gift2-img', 'gift2-name', 'gift2-btn');
+
+    document.querySelector('.close-btn5').onclick = function() {
+      modal.style.display = 'none';
+    };
+  }
+
+  function fetchProductDataAndUpdateModal(productUrl, imgId, nameId, buttonId) {
+    fetch(`${productUrl}.json`)
+      .then(response => response.json())
+      .then(productData => {
+        const product = productData.product;
+        const productImg = product.images[0].src;
+        const productName = product.title;
+        const variantId = product.variants[0].id;
+
+        document.getElementById(imgId).src = productImg;
+        document.getElementById(nameId).innerText = productName;
+        document.getElementById(buttonId).onclick = function() {
+          addSelectedGiftToCart(variantId);
+          document.getElementById('gift-selection-modal').style.display = 'none';
+        };
+      })
+      .catch(error => console.error(`Error fetching product data for ${productUrl}:`, error));
+  }
+
+  function addSelectedGiftToCart(variantId) {
     fetch('/cart/add.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: [{ id: variantId, quantity: 1, properties: { _isFreeGift: true } }] })
+      body: JSON.stringify({ items: [{ id: variantId, quantity: 1 }] })
     })
-    .then(response => {
-      if (response.ok) { location.reload(); } 
-      else { console.error('Failed to add free gift to cart'); }
-    })
-    .catch(error => { console.error('Error adding free gift to cart:', error); });
+      .then(response => response.json())
+      .then(data => {
+        console.log('Free gift added successfully:', data);
+        location.reload();
+      })
+      .catch(error => console.error('Error adding free gift:', error));
   }
 
-  async function checkFreebieEligibility() {
-    const freebieModal = document.getElementById('gift-selection-modal');
-    if (!freebieModal) return;
-
-    const b2g1IsActive = sessionStorage.getItem('b2g1Active') === 'true';
-    if (b2g1IsActive || freebiePopupManuallyClosedThisPageLoad) {
-      freebieModal.style.display = 'none';
+  function checkCartStatus() {
+    if (sessionStorage.getItem('b2g1Active') === 'true') {
       return;
     }
 
-    try {
-      const cartResponse = await fetch('/cart.js'); // Still need cart data for eligibility
-      const cart = await cartResponse.json();
+    fetch('/cart.js')
+      .then(response => response.json())
+      .then(async cart => {
+        const hasFreeGift = cart.items.some(item =>
+          freeGiftProductUrls.some(url => item.url && item.url.includes(url))
+        );
+        if (!hasFreeGift) {
+          let totalEligiblePrice = 0;
+          const cartElements = document.querySelectorAll('.cart-item');
 
-      const hasExistingFreeGift = cart.items.some(item => 
-        window.freebieProductData && Object.values(window.freebieProductData).some(pData => pData && pData.variants && pData.variants.some(v => v.id === item.variant_id)) && item.final_price === 0
-        // More robust check using preloaded data if item.url isn't reliable for freebies
-        // Or simplify: freeGiftProductHandles.some(handle => item.handle === handle && item.final_price === 0) // if item.handle is available
-      );
-      // Simpler check if item.url still points to the product handle in freeGiftProductHandles
-      const hasExistingFreeGiftSimple = cart.items.some(item => 
-        freeGiftProductHandles.some(handle => item.url?.includes(handle)) && item.final_price === 0
-      );
+          for (const item of cart.items) {
+            const productHandle = item.handle;
+            await fetch(`/products/${productHandle}.json`)
+              .then(response => response.json())
+              .then(async productData => {
+                const product = productData.product;
+                const isEligible = product.tags.includes('freebie popup');
+                const freeGiftColor = (product.metafields && product.metafields.custom && product.metafields.custom.product_color_name)
+                  ? product.metafields.custom.product_color_name.value
+                  : '';
 
+                if (isEligible) {
+                  totalEligiblePrice += parseInt(item.final_line_price);
+                }
 
-      if (hasExistingFreeGiftSimple) { // Using simpler check for now
-        freebieModal.style.display = 'none';
-        return;
-      }
-
-      let totalEligiblePriceCents = 0;
-      for (const item of cart.items) {
-        // To check 'freebie popup' tag, we still need to fetch or have tags pre-loaded for *cart items*
-        // This part is tricky without fetching each cart item's full data
-        // Assuming for now, any item contributes if we cannot easily check tags without more fetches
-        // For a more accurate totalEligiblePrice, tags for cart items would be needed.
-        // Let's use a simplified approach: assume all items in cart (not freebies themselves) contribute if we can't check tags easily.
-        // OR, fetch product data for cart items if essential.
-        // The original code fetched product data for cart items, let's retain that for tag checking:
-
-        const productHandle = item.handle;
-        try { // This fetch is for cart items to check their 'freebie popup' tag
-          const productResponse = await fetch(`/products/${productHandle}.json`);
-          if (productResponse.ok) {
-            const productData = await productResponse.json();
-            if (productData.product?.tags?.includes('freebie popup')) {
-              totalEligiblePriceCents += item.final_line_price;
-            }
+                if (totalEligiblePrice >= 1000) {
+                  const isDuplicate = await hasDuplicateColor(cartElements, freeGiftColor);
+                  if (!isDuplicate) {
+                    showModal();
+                  } else {
+                    console.log(`Skipping free gift due to duplicate color: ${freeGiftColor}`);
+                  }
+                }
+              })
+              .catch(error => console.error('Error fetching product data:', error));
           }
-        } catch (error) {
-          // console.warn(`Could not fetch product details for cart item ${productHandle} during eligibility:`, error);
         }
-      }
-      // console.log(`Freebie Eligibility: Total eligible amount: ${totalEligiblePriceCents} cents (threshold: ${FREEBIE_ELIGIBILITY_THRESHOLD_CENTS})`);
-
-      if (totalEligiblePriceCents >= FREEBIE_ELIGIBILITY_THRESHOLD_CENTS) {
-        await showFreebieModal(); 
-      } else {
-        freebieModal.style.display = 'none';
-      }
-    } catch (error) {
-      console.error('Error checking freebie eligibility:', error);
-      if (freebieModal) freebieModal.style.display = 'none';
-    }
+      })
+      .catch(error => console.error('Error fetching cart data:', error));
   }
 
-  // --- General Initializers & Listeners for other functionalities ---
-  function initializeQuantityChangeListeners() {
-    document.querySelectorAll('.quantity__button, quantity-input .quantity__input').forEach(element => {
-      const eventType = element.tagName.toLowerCase() === 'input' ? 'change' : 'click';
-      element.addEventListener(eventType, function() {
-        setTimeout(() => {
-          enforceB2g1Rules().then(() => location.reload()); 
-        }, 700); 
-      });
+  setInterval(checkCartStatus, 5000);
+  //checkCartStatus();
+});
+
+// Remove button functionality
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('cart-remove-button a').forEach(function (button) {
+    button.addEventListener('click', function (event) {
+      event.preventDefault();
+      fetch(button.href)
+        .then(() => {
+          location.reload();
+        })
+        .catch((error) => {
+          console.error('Error removing item:', error);
+        });
     });
-  }
-
-  function initializeRemoveButtonListeners() {
-      document.querySelectorAll('cart-remove-button a.button--tertiary').forEach(button => {
-          button.addEventListener('click', function (event) {
-              event.preventDefault();
-              const urlToRemove = this.getAttribute('href'); 
-              if (urlToRemove) {
-                  fetch(urlToRemove, { method: 'GET' }) 
-                      .then(() => location.reload())
-                      .catch(() => location.reload()); 
-              }
-          });
-      });
-  }
-  
-  // --- Initial Calls & Periodic Checks ---
-  initializeB2G1ProgressClose();
-  initializeViolationPopup();
-
-  // Ensure pre-loaded data is available before proceeding
-  if (window.freebieProductData) {
-    enforceB2g1Rules().then(() => { 
-      updateB2G1ProgressBar(); 
-      checkFreebieEligibility(); 
-    });
-
-    setInterval(() => { 
-      updateB2G1ProgressBar();
-      checkFreebieEligibility();
-    }, 6000); 
-  } else {
-    console.error("Freebie product data not pre-loaded. Freebie modal may not function correctly.");
-    // Fallback or just let B2G1 run
-    enforceB2g1Rules().then(updateB2G1ProgressBar);
-    setInterval(updateB2G1ProgressBar, 6000);
-  }
-
+  });
 });
 </script>
