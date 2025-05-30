@@ -19,77 +19,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // Helper function for manual cart refresh (async version)
-  async function manualCartRefresh() {
-    console.log("Attempting manual cart refresh for B2G1.");
-    // This assumes 'window.routes' is globally available.
-    const routes = window.routes || { cart_url: '/cart' }; // Basic fallback
-
-    function getB2G1SectionInnerHTML(html, selector) {
-      try {
-        const parsedDoc = new DOMParser().parseFromString(html, 'text/html');
-        const element = parsedDoc.querySelector(selector);
-        return element ? element.innerHTML : "";
-      } catch (e) {
-        console.error("Error parsing HTML for B2G1 section:", e);
-        return "";
-      }
-    }
-
-    const mainCartItemsElement = document.getElementById('main-cart-items');
-    const cartIconBubbleElement = document.getElementById('cart-icon-bubble');
-
-    try {
-      if (mainCartItemsElement) {
-        const mainCartSectionId = mainCartItemsElement.dataset.id || 'main-cart-items';
-        const responseText = await fetch(`${routes.cart_url}?section_id=${mainCartSectionId}`).then(res => res.ok ? res.text() : Promise.reject(`Failed to fetch ${mainCartSectionId}`)).catch(e => {console.error(e); return null;});
-        if (responseText) {
-          // Common selectors for cart items content within its section
-          const selectors = ['cart-items', '.js-contents', `#${mainCartSectionId}`];
-          let sourceHtml = "";
-          for (const sel of selectors) {
-            sourceHtml = getB2G1SectionInnerHTML(responseText, sel);
-            if (sourceHtml) break;
-          }
-          
-          if (sourceHtml) {
-            const targetElement = mainCartItemsElement.querySelector('.js-contents') || mainCartItemsElement.querySelector('cart-items') || mainCartItemsElement;
-            targetElement.innerHTML = sourceHtml;
-          } else {
-            console.warn(`Could not find content for main-cart-items using selectors: ${selectors.join(', ')}`);
-          }
-        }
-      }
-
-      if (cartIconBubbleElement) {
-        const responseText = await fetch(`${routes.cart_url}?section_id=cart-icon-bubble`).then(res => res.ok ? res.text() : Promise.reject('Failed to fetch cart-icon-bubble')).catch(e => {console.error(e); return null;});
-        if (responseText) {
-          const sourceHtml = getB2G1SectionInnerHTML(responseText, '.shopify-section'); // cart-icon-bubble is usually a .shopify-section
-          if (sourceHtml) {
-            cartIconBubbleElement.innerHTML = sourceHtml;
-          } else {
-            console.warn('Could not find content for cart-icon-bubble using selector: .shopify-section');
-          }
-        }
-      }
-    } catch (e) {
-      console.error("Error during B2G1 manual cart refresh:", e);
-      // Fallback to reload if manual refresh itself errors significantly,
-      // though this should be a last resort.
-      // location.reload(); 
-    }
-  }
-
-  async function enforceB2g1Rules() {
+  // Original enforceB2g1Rules (synchronous, calls async removeProductFromCart)
+  function enforceB2g1Rules() {
     const cartItemsNodes = document.querySelectorAll('.color-info .cart-item');
     const skuMap = {};
     let productRemoved = false;
     let b2g1Active = false;
-
-    // Check for Shopify PubSub
-    const hasPubSub = window.Shopify && window.Shopify.theme && window.Shopify.theme.pubsub;
-    const pubSubEvents = hasPubSub ? window.Shopify.theme.pubsub.PUB_SUB_EVENTS : null;
-    const publishEvent = hasPubSub ? window.Shopify.theme.pubsub.publish : null;
 
     cartItemsNodes.forEach(item => {
       const sku = item.getAttribute('data-product-sku');
@@ -116,16 +51,17 @@ document.addEventListener('DOMContentLoaded', function() {
       const totalQuantity = paidQuantity + freeQuantity;
 
       if (freeItems.length > 0 && totalQuantity > 2) {
-        for (const freeItem of freeItems) { // Ensure this loop is async
-          const removed = await removeProductFromCart(freeItem.lineItemKey);
-          if (removed) {
-            productRemoved = true;
-          }
-        }
+        freeItems.forEach(freeItem => {
+          removeProductFromCart(freeItem.lineItemKey).then(removed => {
+            if (removed) {
+              productRemoved = true;
+            }
+          });
+        });
       }
 
       if (freeItems.length > 0 && totalQuantity <= 2) {
-        b2g1Active = true; // Mark B2G1 as active if any SKU qualifies
+        b2g1Active = true; 
       }
     }
 
@@ -134,35 +70,17 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       sessionStorage.removeItem('b2g1Active');
     }
-
+    
     if (productRemoved) {
-      sessionStorage.setItem('showPopup', 'true');
-      // location.reload(); // Removed page reload
-
-      if (hasPubSub && pubSubEvents && publishEvent) {
-        console.log("B2G1: Product removed, attempting update via PubSub.");
-        try {
-          const cartState = await fetch('/cart.js').then(res => res.ok ? res.json() : Promise.reject("Failed to fetch cart state for PubSub")).catch(e => {console.error(e); return null;});
-          if (cartState) {
-            publishEvent(pubSubEvents.cartUpdate, { source: 'b2g1-rules', cartData: cartState });
-            // Delay progress bar update slightly to allow DOM changes by subscribers
-            setTimeout(() => updateProgressBar(), 500);
-          } else {
-            // Fallback if cart state fetch fails
-            console.warn("B2G1: PubSub selected, but cart state fetch failed. Falling back to manual refresh.");
-            await manualCartRefresh();
-            updateProgressBar();
-          }
-        } catch (e) {
-          console.error("B2G1: Error publishing cartUpdate event or fetching cart state:", e);
-          await manualCartRefresh(); // Fallback to manual refresh
-          updateProgressBar();
+      setTimeout(() => {
+        // Double check productRemoved inside timeout as its value might have changed
+        // This is a bit fragile due to async nature of removeProductFromCart
+        // and fixed 500ms timeout.
+        if (productRemoved) { 
+            sessionStorage.setItem('showPopup', 'true');
+            location.reload();
         }
-      } else {
-        console.log("B2G1: Product removed, Shopify PubSub not available. Attempting manual cart refresh.");
-        await manualCartRefresh();
-        updateProgressBar();
-      }
+      }, 500); 
     }
   }
 
@@ -189,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch('/cart.js')
       .then(response => response.json())
       .then(cart => {
-        const allItems = Array.from(document.querySelectorAll('.cart-item'));
+        const allItems = Array.from(document.querySelectorAll('.cart-item')); // Potentially stale DOM query
         const b2g1Items = allItems.filter(item => {
           const attr = item.getAttribute('data-b2g1');
           return attr && attr.trim() === "true";
@@ -228,12 +146,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let percent = Math.min((displayedCount / 3) * 100, 100);
         progressBar.style.width = percent + "%";
-        itemCount.textContent = `${displayedCount}/3 items`;
+        itemCount.textContent = \`\${displayedCount}/3 items\`;
 
         if (displayedCount < 3) {
           const remainingItems = 3 - displayedCount;
           const itemText = remainingItems === 1 ? 'item' : 'items';
-          message.innerHTML = `You're almost there! Add ${remainingItems} more ${itemText} from this <a href="https://ebodycare.in/collections/buy-2-get-1-free">page</a> to avail this offer.`;
+          message.innerHTML = \`You're almost there! Add \${remainingItems} more \${itemText} from this <a href="https://ebodycare.in/collections/buy-2-get-1-free">page</a> to avail this offer.\`;
           progressBar.classList.remove('complete');
         } else {
           message.textContent = "You have availed the Buy 2 Get 1 offer!";
@@ -256,15 +174,15 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Initialize B2G1 functions
-  enforceB2g1Rules();
-  updateProgressBar();
-  setInterval(updateProgressBar, 5000);
+  enforceB2g1Rules(); // Initial call on page load
+  updateProgressBar(); // Initial call
+  setInterval(updateProgressBar, 5000); // Periodic update
 
-  // Optional: Add listeners for quantity changes to reload page after update.
+  // Listeners for quantity changes - also reloads page
   document.querySelectorAll('.quantity__button, .quantity__input').forEach(element => {
     const eventType = element.tagName === 'INPUT' ? 'change' : 'click';
     element.addEventListener(eventType, function() {
-      setTimeout(() => location.reload(), 1000);
+      setTimeout(() => location.reload(), 1000); 
     });
   });
 });
