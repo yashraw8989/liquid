@@ -340,8 +340,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Initial check on page load
   //checkCartStatus();  <===== COMMENTED OUT THIS LINE
+
+  // The Free Gift Modal polling logic (setInterval for checkCartStatus and its helper functions like 
+  // addSelectedGiftToCart, fetchProductDataAndUpdateModal, hasDuplicateColor, showModal)
+  // has been REMOVED from this inline script. Its functionality will be integrated into 
+  // assets/b2g1-handler.js and triggered by the cart:updated event or after UI updates.
 });
 </script>
+<!-- Script block for AJAX quantity updates REMOVED as this will be handled by b2g1-handler.js -->
 {{ 'component-cart.css' | asset_url | stylesheet_tag }}
 {{ 'component-cart-items.css' | asset_url | stylesheet_tag }}
 {{ 'component-totals.css' | asset_url | stylesheet_tag }}
@@ -425,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function () {
               </table>
               <ul>
                 {%- for item in cart.items -%}
-                  <li class="cart-item custom-cart-page" id="CartItem-{{ item.index | plus: 1 }}">
+                  <li class="cart-item custom-cart-page" id="CartItem-{{ item.index | plus: 1 }}" data-line-item-key="{{ item.key }}">
                     <div class="custom-cart-p-details">
                       <div class="cart-item__media dd">
                         {% if item.image %}
@@ -723,7 +729,7 @@ document.addEventListener('DOMContentLoaded', function () {
     cartTotal.textContent = Shopify.formatMoney(cartData.total_price);
   }
 </script>
-
+<!-- Style block for .cart-item-freebie retained -->
 <style>
   .cart-item-freebie .cart-item__quantity-wrapper.quantity-popover-wrapper {
     display: none;
@@ -767,24 +773,12 @@ document.addEventListener('DOMContentLoaded', function () {
   ]
 }
 {% endschema %}
+<!-- canvas-confetti script is still useful for popConfetti in b2g1-handler.js -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
-<ul class="color-info">
-  {% for item in cart.items %}
-  <li class="cart-item custom-cart-page" 
-      id="CartItem-{{ forloop.index }}" 
-      data-product-handle="{{ item.product.handle }}" 
-      data-product-color="{% if item.product.metafields.custom.product_color_name %}{{ item.product.metafields.custom.product_color_name.value }}{% else %}unknown{% endif %}"
-      data-product-sku="{{ item.sku }}" 
-      data-product-variant-id="{{ item.variant_id }}"
-      data-line-item-key="{{ item.key }}"
-      data-product-price="{{ item.final_line_price | divided_by: 100 }}"
-      data-product-type="{% if item.final_line_price == 0 %}free{% else %}paid{% endif %}"
-      data-product-quantity="{{ item.quantity }}"
-      data-b2g1="{% if item.product.tags contains 'buy 2 get 1 free' %}true{% else %}false{% endif %}">
-  </li>
-  {% endfor %}
-</ul>
+<!-- 
+  The ul.color-info list is removed as B2G1 logic will now use cart JSON.
+-->
 
 {%- assign b2g1_products_in_cart = false -%}
 {%- assign has_zero_price_item_liquid = false -%}
@@ -798,9 +792,12 @@ document.addEventListener('DOMContentLoaded', function () {
   {%- endif -%}
 {%- endfor -%}
 
-{% comment %} Corrected Liquid condition below: {% endcomment %}
+{% comment %} 
+  The B2G1 progress bar HTML is retained. 
+  Its display will be controlled by _PROMISE_updateUI in b2g1-handler.js.
+{% endcomment %}
 {% if b2g1_products_in_cart and has_zero_price_item_liquid == false %}
-  <div class="b2g1-progress cart-progress">
+  <div class="b2g1-progress cart-progress" style="display: none;"> {/* Initially hidden, JS will show it */}
     <span class="close-progress">&times;</span>
     <div class="progress-container">
       <div class="progress-header">
@@ -821,6 +818,10 @@ document.addEventListener('DOMContentLoaded', function () {
   <div id="product-details-content"></div>
 </div>
 
+<!-- 
+  The Free Gift Modal HTML is retained. 
+  Its display and logic will be refactored next.
+-->
 <div id="gift-selection-modal" class="gift-main-box" style="display:none;">
   <div class="product-gift-popup">
     <div class="close-btn5" id="freebie-close-btn">X</div>
@@ -848,6 +849,7 @@ document.addEventListener('DOMContentLoaded', function () {
   </div>
 </div>
 <style>
+/* Styles for b2g1-progress and gift-main-box are retained as they are still used by the remaining HTML */
 .b2g1-progress {
   position: fixed;
   bottom: 0px;
@@ -1079,325 +1081,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 </style>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  // Initialize progress bar closed state
-  let progressBarClosed = false;
-  let offerComplete = false;
-
-  // Add close button functionality
-  const closeProgressBtn = document.querySelector('.close-progress');
-  if (closeProgressBtn) {
-    closeProgressBtn.addEventListener('click', function() {
-      const progressContainer = document.querySelector('.b2g1-progress');
-      if (progressContainer) {
-        progressContainer.style.display = 'none';
-        progressBarClosed = true;
-      }
-    });
-  }
-
-  /* ---------- Violation Popup Display ---------- */
-  if (sessionStorage.getItem('showPopup') === 'true') {
-    sessionStorage.removeItem('showPopup');
-    const popup = document.getElementById('cart-popup');
-    if (popup) {
-      popup.style.display = 'block';
-      document.getElementById('close-popup').addEventListener('click', function() {
-        popup.style.display = 'none';
-      });
-      const closeBtn = popup.querySelector('.close-btn');
-      if (closeBtn) {
-        closeBtn.addEventListener('click', function() {
-          popup.style.display = 'none';
-        });
-      }
-    }
-  }
-
-  /* ---------- Product Removal (B2G1 Enforcement) ---------- */
-  async function removeProductFromCart(lineItemKey) {
-    try {
-      console.log("Attempting removal for lineItemKey:", lineItemKey);
-      const response = await fetch('/cart/change.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: lineItemKey, quantity: 0 })
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Error removing product:', errorData);
-        return false;
-      }
-      console.log(`Successfully removed product with lineItemKey: ${lineItemKey}`);
-      return true;
-    } catch (error) {
-      console.error('Error in removeProductFromCart:', error);
-      return false;
-    }
-  }
-
-  async function enforceB2g1Rules() {
-    const cartItems = document.querySelectorAll('.color-info .cart-item');
-    const skuMap = {};
-    let productRemoved = false;
-    let b2g1Active = false;
-
-    cartItems.forEach(item => {
-      const sku = item.getAttribute('data-product-sku');
-      const quantity = parseInt(item.getAttribute('data-product-quantity')) || 0;
-      const type = item.getAttribute('data-product-type');
-      const lineItemKey = item.getAttribute('data-line-item-key');
-      
-      if (!sku || !lineItemKey) return;
-
-      if (!skuMap[sku]) {
-        skuMap[sku] = { paidQuantity: 0, freeItems: [] };
-      }
-
-      if (type === 'free') {
-        skuMap[sku].freeItems.push({ lineItemKey, quantity });
-      } else {
-        skuMap[sku].paidQuantity += quantity;
-      }
-    });
-
-    for (const sku in skuMap) {
-      const { paidQuantity, freeItems } = skuMap[sku];
-      const freeQuantity = freeItems.reduce((sum, item) => sum + item.quantity, 0);
-      const totalQuantity = paidQuantity + freeQuantity;
-
-      if (freeItems.length > 0 && totalQuantity > 2) {
-        for (const freeItem of freeItems) {
-          const removed = await removeProductFromCart(freeItem.lineItemKey);
-          if (removed) {
-            productRemoved = true;
-          }
-        }
-      }
-
-      if (freeItems.length > 0 && totalQuantity <= 2) {
-        b2g1Active = true;
-      }
-    }
-
-    if (b2g1Active) {
-      sessionStorage.setItem('b2g1Active', 'true');
-    } else {
-      sessionStorage.removeItem('b2g1Active');
-    }
-
-    if (productRemoved) {
-      sessionStorage.setItem('showPopup', 'true');
-      location.reload();
-    }
-  }  function updateProgressBar() {
-    if (progressBarClosed) {
-      return;
-    }
-
-    fetch('/cart.js')
-      .then(response => response.json())
-      .then(cart => {
-        const allItems = Array.from(document.querySelectorAll('.cart-item'));
-        const b2g1Items = allItems.filter(item => {
-          const attr = item.getAttribute('data-b2g1');
-          return attr && attr.trim() === "true";
-        });
-
-        const progressContainer = document.querySelector('.b2g1-progress');
-        const freebieModal = document.getElementById('gift-selection-modal');
-
-        let modalDisplay = 'none';
-        if (freebieModal) {
-          modalDisplay = window.getComputedStyle(freebieModal).getPropertyValue('display');
-        }
-
-        // Check if there is any item in the cart with 0 price (free item)
-        const hasZeroPriceItem = cart.items.some(item => item.final_price === 0);
-
-        if (hasZeroPriceItem || (freebieModal && modalDisplay !== 'none') || b2g1Items.length === 0) {
-          progressContainer.style.setProperty('display', 'none', 'important');
-          return; // Exit if a free item is present or other conditions met
-        } else {
-          progressContainer.style.setProperty('display', 'block', 'important');
-        }
-
-        let qualifyingCount = 0;
-        b2g1Items.forEach(item => {
-          qualifyingCount += parseInt(item.getAttribute('data-product-quantity')) || 0;
-        });
-
-        const displayedCount = Math.min(qualifyingCount, 3);
-
-        const progressBar = document.querySelector('.progress-bar');
-        const itemCount = document.querySelector('.item-count');
-        const message = document.querySelector('.progress-message');
-
-        let percent = Math.min((displayedCount / 3) * 100, 100);
-        progressBar.style.width = percent + "%";
-        itemCount.textContent = `${displayedCount}/3 items`;
-
-        if (displayedCount < 3) {
-          const remainingItems = 3 - displayedCount;
-          const itemText = remainingItems === 1 ? 'item' : 'items';
-          message.innerHTML = `You're almost there! Add ${remainingItems} more ${itemText} from this <a href="https://ebodycare.in/collections/buy-2-get-1-free" style="color:red;">page</a> to avail this offer.`;
-          progressBar.classList.remove('complete');
-        } else {
-          message.textContent = "You have availed the Buy 2 Get 1 offer!";
-          progressBar.classList.add('complete');
-          if (!offerComplete) {
-            popConfetti();
-            offerComplete = true;
-          }
-        }
-      })
-      .catch(error => console.error("Error fetching cart data:", error));
-  }
-
-  function popConfetti() {
-    confetti({
-      particleCount: 150,
-      spread: 70,
-      origin: { y: 0.9 }
-    });
-  }
-
-  // Initialize functionality
-  enforceB2g1Rules();
-  updateProgressBar();
-  setInterval(updateProgressBar, 5000);
-
-  // Add quantity button listeners
-  document.querySelectorAll('.quantity__button, .quantity__input').forEach(element => {
-    const eventType = element.tagName === 'INPUT' ? 'change' : 'click';
-    element.addEventListener(eventType, function() {
-      setTimeout(() => location.reload(), 1000);
-    });
-  });  /* ---------- Freebie Popup (Gift Modal) ---------- */
-  const freeGiftProductUrls = [
-    '/products/bodyx-unisex-deodorant-xtacy-deo-150ml',
-    '/products/bodyx-unisex-deodorant-xpression-deo-150ml'
-  ];
-
-  async function hasDuplicateColor(cartElements, freeGiftColor) {
-    for (const element of cartElements) {
-      const productColor = element.dataset.productColor;
-      if (productColor === freeGiftColor) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  function showModal() {
-    const modal = document.getElementById('gift-selection-modal');
-    modal.style.display = 'block';
-
-    fetchProductDataAndUpdateModal(freeGiftProductUrls[0], 'gift1-img', 'gift1-name', 'gift1-btn');
-    fetchProductDataAndUpdateModal(freeGiftProductUrls[1], 'gift2-img', 'gift2-name', 'gift2-btn');
-
-    document.querySelector('.close-btn5').onclick = function() {
-      modal.style.display = 'none';
-    };
-  }
-
-  function fetchProductDataAndUpdateModal(productUrl, imgId, nameId, buttonId) {
-    fetch(`${productUrl}.json`)
-      .then(response => response.json())
-      .then(productData => {
-        const product = productData.product;
-        const productImg = product.images[0].src;
-        const productName = product.title;
-        const variantId = product.variants[0].id;
-
-        document.getElementById(imgId).src = productImg;
-        document.getElementById(nameId).innerText = productName;
-        document.getElementById(buttonId).onclick = function() {
-          addSelectedGiftToCart(variantId);
-          document.getElementById('gift-selection-modal').style.display = 'none';
-        };
-      })
-      .catch(error => console.error(`Error fetching product data for ${productUrl}:`, error));
-  }
-
-  function addSelectedGiftToCart(variantId) {
-    fetch('/cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: [{ id: variantId, quantity: 1 }] })
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Free gift added successfully:', data);
-        location.reload();
-      })
-      .catch(error => console.error('Error adding free gift:', error));
-  }
-
-  function checkCartStatus() {
-    if (sessionStorage.getItem('b2g1Active') === 'true') {
-      return;
-    }
-
-    fetch('/cart.js')
-      .then(response => response.json())
-      .then(async cart => {
-        const hasFreeGift = cart.items.some(item =>
-          freeGiftProductUrls.some(url => item.url && item.url.includes(url))
-        );
-        if (!hasFreeGift) {
-          let totalEligiblePrice = 0;
-          const cartElements = document.querySelectorAll('.cart-item');
-
-          for (const item of cart.items) {
-            const productHandle = item.handle;
-            await fetch(`/products/${productHandle}.json`)
-              .then(response => response.json())
-              .then(async productData => {
-                const product = productData.product;
-                const isEligible = product.tags.includes('freebie popup');
-                const freeGiftColor = (product.metafields && product.metafields.custom && product.metafields.custom.product_color_name)
-                  ? product.metafields.custom.product_color_name.value
-                  : '';
-
-                if (isEligible) {
-                  totalEligiblePrice += parseInt(item.final_line_price);
-                }
-
-                if (totalEligiblePrice >= 1000) {
-                  const isDuplicate = await hasDuplicateColor(cartElements, freeGiftColor);
-                  if (!isDuplicate) {
-                    showModal();
-                  } else {
-                    console.log(`Skipping free gift due to duplicate color: ${freeGiftColor}`);
-                  }
-                }
-              })
-              .catch(error => console.error('Error fetching product data:', error));
-          }
-        }
-      })
-      .catch(error => console.error('Error fetching cart data:', error));
-  }
-
-  setInterval(checkCartStatus, 5000);
-  //checkCartStatus();
-});
-
-// Remove button functionality
-document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('cart-remove-button a').forEach(function (button) {
-    button.addEventListener('click', function (event) {
-      event.preventDefault();
-      fetch(button.href)
-        .then(() => {
-          location.reload();
-        })
-        .catch((error) => {
-          console.error('Error removing item:', error);
-        });
-    });
-  });
-});
-</script>
+<!-- The large inline script block containing duplicated B2G1 logic (enforceB2g1Rules, updateProgressBar, etc.)
+     and old reload-based quantity listeners has been REMOVED.
+     The remaining free gift modal logic (first script block in the original file) is kept for now.
+-->
